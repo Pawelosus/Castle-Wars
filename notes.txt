@@ -1,0 +1,37 @@
+[1]
+	(1) Base - castle +2
+	(1) Wall - fence +3
+	(3) Reserve - castle +8; fence -4
+	(3) Defense - fence +6
+	(5) Tower - castle +5
+	(8) School - builders +1
+	(10) Wain - castle +8, enemy castle -4
+	(12) Fence - fence +22
+	(18) Fort - castle +20
+	(39) Babylon - castle +32
+
+
+[2]
+	(1) Archer - 2 dmg
+	(2) Knight - 3 dmg
+	(2) Rider - 4 dmg
+	(4) Platoon - 6 dmg
+	(8) Recruit - soldiers +1
+	(10) Attack - 12 dmg
+	(12) Saboteur - enemy stacks -4
+	(15) Thief - transfer enemy stacks 5
+	(18) SWAT - enemy castle 10 dmg
+	(28) Banshee - 32 dmg
+
+
+[3]
+	(4) Conjure bricks - +8 bricks
+	(4) Conjure weapons - +8 weapons
+	(4) Conjure crystals - +8 crystals
+	(4) Crush bricks - -8 enemy bricks
+	(4) Crush weapons - -8 enemy weapons
+	(4) Crush crystals - -8 enemy crystals
+	(8) Sorcerer - magic +1
+	(21) Dragon - 25 dmg
+	(22) Pixies - castle +22
+	(45) Curse - all +1; enemies all -1
