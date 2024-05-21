@@ -17,19 +17,19 @@ To run the game, follow these steps:
 
 1. Clone the repository:
 
-git clone https://github.com/Pawelosus/Castle-Wars.git
+`git clone https://github.com/Pawelosus/Castle-Wars.git`
 
 2. Navigate to the project directory:
 
-cd Castle-Wars
+`cd Castle-Wars`
 
 3. Install dependencies:
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 4. Run the game:
 
-python main.py
+`python main.py`
 
 ## Contributing
 
