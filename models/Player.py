@@ -9,7 +9,7 @@ class Player:
         self.name = name
         self.hand = self.init_hand()
         self.playable_cards = []
-        self.castle_hp = 1
+        self.castle_hp = 30
         self.fence_hp = 10
         self.resources = [
             [2, 5],
