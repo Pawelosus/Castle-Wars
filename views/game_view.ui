@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Frame</class>
+ <widget class="QFrame" name="Frame">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>29</x>
+     <y>60</y>
+     <width>111</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="p1_stats_vbox">
+    <item>
+     <layout class="QGridLayout" name="p1_resource_0_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p1_resource_0_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p1_resource_0_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Builders</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p1_resource_0_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p1_resource_0_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: white;</string>
+        </property>
+        <property name="text">
+         <string>Bricks</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p1_resource_1_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p1_resource_1_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p1_resource_1_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Soldiers</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p1_resource_1_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Weapons</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p1_resource_1_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p1_resource_2_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p1_resource_2_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p1_resource_2_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Magic</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p1_resource_2_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Crystals</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p1_resource_2_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p1_hp_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p1_castle_hp_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Castle</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p1_castle_hp_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>30</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p1_fence_hp_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: white</string>
+        </property>
+        <property name="text">
+         <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p1_fence_hp_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: white</string>
+        </property>
+        <property name="text">
+         <string>Fence</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>450</y>
+     <width>741</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="current_player_hand_hbox"/>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>658</x>
+     <y>60</y>
+     <width>111</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="p2_stats_vbox">
+    <item>
+     <layout class="QGridLayout" name="p2_resource_0_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p2_resource_0_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p2_resource_0_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Builders</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p2_resource_0_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: white;</string>
+        </property>
+        <property name="text">
+         <string>Bricks</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p2_resource_0_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: red; 
+border: 1px solid black;
+color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p2_resource_1_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p2_resource_1_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p2_resource_1_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Soldiers</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p2_resource_1_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Weapons</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p2_resource_1_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(0, 220, 0); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p2_resource_2_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p2_resource_2_0_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Magic</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p2_resource_2_1_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Crystals</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p2_resource_2_0_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p2_resource_2_1_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 255); border: 1px solid black; color: white;</string>
+        </property>
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="p2_hp_grid">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="p2_castle_hp_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>30</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="p2_castle_hp_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: rgb(232, 232, 0);
+font-weight: bold;</string>
+        </property>
+        <property name="text">
+         <string>Castle</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="p2_fence_hp_name">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: white</string>
+        </property>
+        <property name="text">
+         <string>Fence</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="p2_fence_hp_value">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(180, 180, 180); border: 1px solid black; color: white</string>
+        </property>
+        <property name="text">
+         <string>10</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="p1_name">
+   <property name="geometry">
+    <rect>
+     <x>29</x>
+     <y>20</y>
+     <width>110</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: white;
+font-weight: bold;
+font-size: 14px;</string>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="p2_name">
+   <property name="geometry">
+    <rect>
+     <x>658</x>
+     <y>20</y>
+     <width>110</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: white;
+font-weight: bold;
+font-size: 14px;</string>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="grass_texture" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>410</y>
+     <width>800</width>
+     <height>220</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0.488, y1:0, x2:0.497, y2:1, stop:0 rgba(0, 243, 0, 255), stop:1 rgba(0, 167, 0, 255))</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="sky_texture" native="true">
+   <property name="geometry">
+    <rect>
+     <x>-1</x>
+     <y>0</y>
+     <width>801</width>
+     <height>411</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 153, 229)</string>
+   </property>
+   <widget class="QWidget" name="p2_current_turn_marker" native="true">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>50</y>
+      <width>110</width>
+      <height>3</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: red;</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="p1_current_turn_marker" native="true">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>50</y>
+      <width>110</width>
+      <height>3</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: red;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p2_castle">
+    <property name="geometry">
+     <rect>
+      <x>489</x>
+      <y>400</y>
+      <width>134</width>
+      <height>320</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/castle.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p1_castle">
+    <property name="geometry">
+     <rect>
+      <x>178</x>
+      <y>400</y>
+      <width>134</width>
+      <height>320</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/castle.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p1_fence_base">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>410</y>
+      <width>16</width>
+      <height>280</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/fence_base.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p2_fence_base">
+    <property name="geometry">
+     <rect>
+      <x>447</x>
+      <y>410</y>
+      <width>16</width>
+      <height>280</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/fence_base.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p1_fence_tip">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>394</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/fence_tip.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="p2_fence_tip">
+    <property name="geometry">
+     <rect>
+      <x>447</x>
+      <y>394</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../resources/resources.qrc">:/textures/sprites/textures/fence_tip.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>160</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="last_played_cards_hbox"/>
+   </widget>
+   <widget class="QWidget" name="game_result" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>130</y>
+      <width>331</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: lightgrey</string>
+    </property>
+    <widget class="QLabel" name="game_result_msg">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>271</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-weight: bold; color:black</string>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="game_result_exit_button">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>80</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Back to menu</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <zorder>sky_texture</zorder>
+  <zorder>grass_texture</zorder>
+  <zorder>verticalLayoutWidget</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>verticalLayoutWidget_2</zorder>
+  <zorder>p1_name</zorder>
+  <zorder>p2_name</zorder>
+ </widget>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

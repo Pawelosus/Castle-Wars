@@ -1,0 +1,38 @@
+{
+	"0": [
+		{"name":"Wall", "cost":1, "effect":"fence +3"},
+		{"name":"Base", "cost":1, "effect":"castle +2"},
+		{"name":"Defence", "cost":3, "effect":"fence +6"},
+		{"name":"Reserve", "cost":3, "effect":"castle +8; fence -4"},
+		{"name":"Tower", "cost":5, "effect":"castle +5"},
+		{"name":"School", "cost":8, "effect":"builders +1"},
+		{"name":"Wain", "cost":10, "effect":"castle +8; enemy castle -4"},
+		{"name":"Fence", "cost":12, "effect":"fence +22"},
+		{"name":"Fort", "cost":18, "effect":"castle +20"},
+		{"name":"Babylon", "cost":39, "effect":"castle +32"}
+	],
+	"1": [
+		{"name":"Archer", "cost":1, "effect":"attack 2"},
+		{"name":"Knight", "cost":2, "effect":"attack 3"},
+		{"name":"Rider", "cost":2, "effect":"attack 4"},
+		{"name":"Platoon", "cost":4, "effect":"attack 6"},
+		{"name":"Recruit", "cost":8, "effect":"soldiers +1"},
+		{"name":"Attack", "cost":10, "effect":"attack 12"},
+		{"name":"Saboteur", "cost":12, "effect":"enemy stacks -4"},
+		{"name":"Thief", "cost":15, "effect":"transfer enemy stacks 5"},
+		{"name":"SWAT", "cost":18, "effect":"enemy castle -10"},
+		{"name":"Banshee", "cost":28, "effect":"attack 32"}
+	],
+	"2": [
+		{"name":"Conjure bricks", "cost":4, "effect":"bricks +8"},
+		{"name":"Conjure crystals", "cost":4, "effect":"crystals +8"},
+		{"name":"Conjure weapons", "cost":4, "effect":"weapons +8"},
+		{"name":"Crush bricks", "cost":4, "effect":"enemy bricks -8"},
+		{"name":"Crush crystals", "cost":4, "effect":"enemy crystals -8"},
+		{"name":"Crush weapons", "cost":4, "effect":"enemy weapons -8"},
+		{"name":"Sorcerer", "cost":8, "effect":"magic +1"},
+		{"name":"Dragon", "cost":21, "effect":"attack 25"},
+		{"name":"Pixies", "cost":22, "effect":"castle +22"},
+		{"name":"Curse", "cost":45, "effect":"all +1; enemy all -1"}
+	]
+}

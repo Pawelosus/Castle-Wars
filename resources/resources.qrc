@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="textures">
+    <file>sprites/textures/castle.png</file>
+    <file>sprites/textures/fence_base.png</file>
+    <file>sprites/textures/fence_tip.png</file>
+  </qresource>
+</RCC>
