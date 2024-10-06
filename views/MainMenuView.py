@@ -1,7 +1,5 @@
-from PyQt6.QtGui import QMouseEvent
 import resources.resources_ui  # Loads in all resource files into ui
 from PyQt6 import uic
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFrame, QVBoxLayout
 from views.components.MenuButton import MenuButton
 

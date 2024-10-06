@@ -1,5 +1,6 @@
 from models.HumanPlayer import HumanPlayer
 from models.AIPlayer import AIPlayer
+from typing import Union
 
 class Game:     
     def __init__(self):
@@ -8,40 +9,23 @@ class Game:
         self.current_player = None
         self.game_status = 0
 
-    def setup_singleplayer(self, default_player_names):
+    def setup_singleplayer(self, default_player_names) -> None:
         self.player1 = HumanPlayer(name=default_player_names[0])
         self.player2 = AIPlayer(name=default_player_names[1])
         self.current_player = self.player1
         self.game_status = 0
 
-    def setup_multiplayer(self, default_player_names):
+    def setup_multiplayer(self, default_player_names) -> None:
         self.player1 = HumanPlayer(name=default_player_names[0] + '1')
         self.player2 = HumanPlayer(name=default_player_names[1] + '2')
         self.current_player = self.player1
         self.game_status = 0
     
-    def display_hand(self, player):
-        player.playable_cards = []
-        for i, card in enumerate(player.hand):
-            card_info = f'[{i}] ' + str(card)
-            if card.is_playable(player.resources[card.material_type][1]):
-                player.playable_cards.append(card)
-
-    def take_turn(self, player):
-        while True:
-            chosen_card = self.choose_card(player)
-            if chosen_card:
-                self.use_card_effect(player, chosen_card)
-                break
-            
-        self.update_resources(player)
-        player.draw_card()
-
-    def update_resources(self, player):
+    def update_resources(self, player) -> None:
         for resource in player.resources:
             resource[1] += resource[0]
 
-    def apply_action_to_player(self, target_player, action, action_value):
+    def apply_action_to_player(self, target_player, action, action_value) -> None:
         if 'attack' in action:
             target_player.receive_damage(action_value)
         elif 'castle' in action:
@@ -54,23 +38,25 @@ class Game:
             target_player.add_to_all(action_value)
         else:
             target_player.add_to_resource_based_on_action(action, action_value)
-            
-    def get_other_player(self, player):
-        if player is self.player1:
-            return self.player2
-        else:
-            return self.player1
+
+    def get_other_player(self, player) -> Union[HumanPlayer, AIPlayer]:
+        if self.player1 is None or self.player2 is None:
+            raise ValueError('Player cannot be None')
+
+        return self.player2 if player is self.player1 else self.player1
 
     def change_current_player(self):
         self.current_player = self.get_other_player(self.current_player)
 
     def get_action_target_player(self, player, action):
+        if player is None:
+            raise ValueError('Player cannot be None')
+
         if 'enemy' in action or 'attack' in action:
             return self.get_other_player(player)
         else:
             return player
 
-    
     def use_card_effect(self, player, card):
         actions = card.effect.split(';')  # Given that cards can have multiple actions we handle them seperately.
         for action in actions:
@@ -92,6 +78,9 @@ class Game:
                 self.apply_action_to_player(action_target_player, action, action_value)
 
     def set_game_status(self):
+        if self.player1 is None or self.player2 is None:
+            raise ValueError('Player cannot be None')
+
         # Draw conditions
         if self.player1.castle_hp <= 0 and self.player2.castle_hp <= 0:
             self.game_status = -1
@@ -111,24 +100,4 @@ class Game:
             self.game_status = -1
         else:
             self.game_status = 0  # No winner yet
-
-    def choose_card(self, player):
-        player_input = input('Pick a card by entering its ID: ')
-
-        try:
-            chosen_card_id = int(player_input)
-            chosen_card = player.hand[chosen_card_id]
-        except ValueError:
-            print('Please enter a valid integer.')
-            return None
-        except IndexError:
-            print('Invalid card ID. Please choose a card from your hand.')
-            return None
-        
-        if chosen_card in player.playable_cards:
-            return chosen_card
-        else:
-            print('You can\'t play that card. Please choose a playable card.')
-            return None
-
 

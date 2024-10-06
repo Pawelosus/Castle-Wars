@@ -1,0 +1,8 @@
+{
+  "typeCheckingMode": "basic",
+  "reportPrivateImportUsage": false,
+  "reportAttributeAccessIssue": false,
+  "venvPath": "./venv",
+  "exclude": ["node_modules", "**/__pycache__/**"]
+}
+

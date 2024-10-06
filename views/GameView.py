@@ -214,6 +214,7 @@ class GameView(QFrame):
             return
         game_result_widget = self.findChild(QWidget, 'game_result')
         game_result_msg = self.findChild(QLabel, 'game_result_msg')
+        message = ''
         if game_status == -1:
             message = 'Draw!'
         elif game_status == 1:
