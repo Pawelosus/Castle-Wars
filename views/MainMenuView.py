@@ -4,10 +4,11 @@ from PyQt6.QtWidgets import QFrame, QVBoxLayout
 from views.components.MenuButton import MenuButton
 
 class MainMenuView(QFrame):
-    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback) -> None:
+    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback, start_game_cpu_callback) -> None:
         super().__init__(parent)
         self.start_sp_game_callback = start_game_sp_callback
         self.start_mp_game_callback = start_game_mp_callback
+        self.start_cpu_game_callback = start_game_cpu_callback
 
         uic.loadUi('views/mainmenu_view.ui', self)
 
@@ -16,7 +17,7 @@ class MainMenuView(QFrame):
     def insert_menu_buttons(self) -> None:
         menu_button_vbox = self.findChild(QVBoxLayout, 'menu_button_vbox')
         button_texts = ['1 player', '2 player', 'AI vs AI', 'Player settings', 'Instructions', 'Credits']
-        button_functions = [self.start_sp_game_callback, self.start_mp_game_callback, None, None, None, None]
+        button_functions = [self.start_sp_game_callback, self.start_mp_game_callback, self.start_cpu_game_callback, None, None, None]
 
         for text, function in zip(button_texts, button_functions):
             button = MenuButton(text)

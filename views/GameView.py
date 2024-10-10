@@ -1,12 +1,14 @@
 import resources.resources_ui  # Loads in all resource files into ui
 from PyQt6 import uic
-from PyQt6.QtWidgets import QLabel, QFrame, QHBoxLayout, QWidget, QPushButton
+from PyQt6.QtWidgets import QLabel, QFrame, QHBoxLayout, QWidget, QPushButton, QApplication
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QEvent
+from PyQt6.QtCore import Qt, QEvent, QTimer
 from views.components.CardLabel import CardLabel
 from views.components.CardDiscardLabel import CardDiscardLabel
 from views.components.GhostCardLabel import GhostCardLabel
+from views.components.CardbackLabel import CardbackLabel
 from utils.ImageHelper import ImageHelper
+from models.AIPlayer import AIPlayer
 from config.config import Config
 
 class GameView(QFrame):
@@ -28,12 +30,30 @@ class GameView(QFrame):
 
         self.connect_buttons()
         self.set_player_name_labels()
-        self.display_hand()
         self.init_last_played_cards_hbox()
-        self.update_resource_labels()
         self.color_player_structures()
-        self.update_current_turn_marker()
+
+        self.update_resource_labels()
         self.update_structure_levels()
+        self.update_current_turn_marker()
+        self.start_turn()
+
+    def start_turn(self) -> None:
+        def _handle_ai_turn():
+            card, discarded = self.game_instance.current_player.take_turn()
+            card_label = CardLabel(card)
+            if discarded:
+                discard_label = card_label.findChild(CardDiscardLabel)
+                discard_label.setVisible(True)
+
+            self.card_picked_callback(card, card_label, discarded)
+        
+        self.ctrl_pressed = False
+        self.display_hand()
+        QApplication.processEvents()
+
+        if isinstance(self.game_instance.current_player, AIPlayer):
+            QTimer.singleShot(2000, lambda: _handle_ai_turn())
 
     def init_last_played_cards_hbox(self) -> None:
         def init_card(sprite_path) -> QLabel:
@@ -63,7 +83,6 @@ class GameView(QFrame):
         if game_result_exit_button:
             game_result_exit_button.clicked.connect(self.back_to_main_menu_callback)
     
-
     def color_player_structures(self) -> None:
         players = [self.game_instance.player1, self.game_instance.player2]
 
@@ -104,17 +123,21 @@ class GameView(QFrame):
         current_player = self.game_instance.current_player
         hand_layout = self.findChild(QHBoxLayout, 'current_player_hand_hbox')
         for card in current_player.hand:
-            if card is None:
-                ghost_card = GhostCardLabel()
-                hand_layout.addWidget(ghost_card)
+            card_label = None
+            if isinstance(current_player, AIPlayer) and self.game_instance.game_mode != 3:
+                card_label = CardbackLabel() 
+            elif card is None:
+                card_label = GhostCardLabel()
             else:
                 card_label = CardLabel(card)
                 if card.is_playable(current_player.resources):
                     card_label.clicked.connect(self.card_clicked)
                 else:
                     card_label.apply_unplayable_filter_effect()
+
                 card_label.ctrl_clicked.connect(self.card_ctrl_clicked)
-                hand_layout.addWidget(card_label)
+
+            hand_layout.addWidget(card_label)
             
     def update_resource_labels(self) -> None:
         players = [self.game_instance.player1, self.game_instance.player2]
@@ -130,14 +153,10 @@ class GameView(QFrame):
             fence_hp_label.setText(str(player.fence_hp))
         
     def handle_card_click(self, card_label, discarded=False) -> None:
-        self.card_picked_callback(card_label.card, discarded)
+        self.card_picked_callback(card_label.card, card_label, discarded)
         if self.game_instance.game_status != 0:
             return
         
-        self.clear_hand_display()
-        self.display_hand()
-        self.update_current_turn_marker()
-        self.update_last_played_card_label(card_label)
         if self.ctrl_pressed:
             self.apply_discard_labels()
 
@@ -212,6 +231,7 @@ class GameView(QFrame):
     def handle_game_status(self, game_status) -> None:
         if game_status == 0:
             return
+        
         game_result_widget = self.findChild(QWidget, 'game_result')
         game_result_msg = self.findChild(QLabel, 'game_result_msg')
         message = ''
@@ -235,7 +255,7 @@ class GameView(QFrame):
     def keyPressEvent(self, event) -> None:
         if self.game_instance.game_status != 0:
             return
-        if event.key() == Qt.Key.Key_Control:
+        if event.key() == Qt.Key.Key_Control and not isinstance(self.game_instance.current_player, AIPlayer):
             self.ctrl_pressed = True
             self.apply_discard_labels()
         else:
@@ -244,7 +264,7 @@ class GameView(QFrame):
     def keyReleaseEvent(self, event) -> None:
         if self.game_instance.game_status != 0:
             return
-        if event.key() == Qt.Key.Key_Control:
+        if event.key() == Qt.Key.Key_Control and not isinstance(self.game_instance.current_player, AIPlayer):
             self.ctrl_pressed = False
             self.clear_discard_labels()
         else:
