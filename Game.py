@@ -1,6 +1,6 @@
 from models.HumanPlayer import HumanPlayer
 from models.AIPlayer import AIPlayer
-from models.EasyAIPlayer import EasyAIPlayer
+from models.BasicAIPlayer import BasicAIPlayer
 from typing import Union
 
 class Game:     
@@ -13,7 +13,7 @@ class Game:
 
     def setup_singleplayer(self, default_player_names) -> None:
         self.player1 = HumanPlayer(name=default_player_names[0])
-        self.player2 = EasyAIPlayer(name=default_player_names[1])
+        self.player2 = BasicAIPlayer(name=default_player_names[1])
         self.current_player = self.player1
         self.game_status = 0
         self.game_mode = 1
@@ -26,8 +26,8 @@ class Game:
         self.game_mode = 2
 
     def setup_cpu_only(self, default_player_names) -> None:
-        self.player1 = EasyAIPlayer(name=default_player_names[0] + '1')
-        self.player2 = EasyAIPlayer(name=default_player_names[1] + '2')
+        self.player1 = BasicAIPlayer(name=default_player_names[0] + '1')
+        self.player2 = BasicAIPlayer(name=default_player_names[1] + '2')
         self.current_player = self.player1
         self.game_status = 0
         self.game_mode = 3

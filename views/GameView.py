@@ -53,7 +53,7 @@ class GameView(QFrame):
         QApplication.processEvents()
 
         if isinstance(self.game_instance.current_player, AIPlayer):
-            QTimer.singleShot(2000, lambda: _handle_ai_turn())
+            QTimer.singleShot(1, lambda: _handle_ai_turn())
 
     def init_last_played_cards_hbox(self) -> None:
         def init_card(sprite_path) -> QLabel:
@@ -153,10 +153,10 @@ class GameView(QFrame):
             fence_hp_label.setText(str(player.fence_hp))
         
     def handle_card_click(self, card_label, discarded=False) -> None:
-        self.card_picked_callback(card_label.card, card_label, discarded)
-        if self.game_instance.game_status != 0:
+        if self.game_instance.game_status != 0 or self.game_instance.game_mode == 3:
             return
-        
+
+        self.card_picked_callback(card_label.card, card_label, discarded)
         if self.ctrl_pressed:
             self.apply_discard_labels()
 
@@ -253,18 +253,18 @@ class GameView(QFrame):
             card_label.setDisabled(True)
 
     def keyPressEvent(self, event) -> None:
-        if self.game_instance.game_status != 0:
+        if self.game_instance.game_status != 0 or isinstance(self.game_instance.current_player, AIPlayer):
             return
-        if event.key() == Qt.Key.Key_Control and not isinstance(self.game_instance.current_player, AIPlayer):
+        if event.key() == Qt.Key.Key_Control:
             self.ctrl_pressed = True
             self.apply_discard_labels()
         else:
             super().keyPressEvent(event)
         
     def keyReleaseEvent(self, event) -> None:
-        if self.game_instance.game_status != 0:
+        if self.game_instance.game_status != 0 or isinstance(self.game_instance.current_player, AIPlayer):
             return
-        if event.key() == Qt.Key.Key_Control and not isinstance(self.game_instance.current_player, AIPlayer):
+        if event.key() == Qt.Key.Key_Control:
             self.ctrl_pressed = False
             self.clear_discard_labels()
         else:

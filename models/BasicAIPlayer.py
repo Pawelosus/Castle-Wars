@@ -3,7 +3,7 @@ from models.Card import Card
 from numpy.random import randint
 from typing import Tuple
 
-class EasyAIPlayer(AIPlayer):
+class BasicAIPlayer(AIPlayer):
     def __init__(self, name) -> None:
         super().__init__(name)
 
@@ -26,8 +26,5 @@ class EasyAIPlayer(AIPlayer):
         return card
 
     def get_random_card(self) -> Card:
-        card = self.hand[
-            randint(len(self.hand))
-        ]
-        return card
-
+        valid_cards = [card for card in self.hand if card is not None]  # Hand does contain None values
+        return valid_cards[randint(len(valid_cards))]
