@@ -43,7 +43,6 @@ Contributions are welcome! If you'd like to contribute to the project, please fo
 
 ## TODO List:
 
-- **Simple AI:** Introduce a basic AI that makes random moves, enabling AI vs AI matches.
 - **Deck Editor:** Implement a deck editor to allow players to customize their card decks.
 - **Game Logging:** Log game results along with the cards played to track progress and analyze strategies.
 - **GUI Tweaks:** Adding a navigation bar for exiting games and other small stuff.
