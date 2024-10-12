@@ -8,7 +8,6 @@ class Player:
         self.deck = Deck()
         self.name = name
         self.hand = self.init_hand()
-        self.playable_cards = []
         self.castle_hp = 30
         self.fence_hp = 10
         self.resources = [
@@ -26,6 +25,10 @@ class Player:
             card = self.deck.draw_card()
             hand.append(card)        
         return hand
+
+    def get_playable_cards(self) -> list:
+        playable_cards = [card for card in self.hand if card is not None and card.is_playable(self.resources)]
+        return playable_cards
     
     def has_empty_hand(self) -> bool:
         """Returns whether Player's hand consists of only None type cards"""
