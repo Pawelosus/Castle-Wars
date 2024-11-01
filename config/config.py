@@ -49,3 +49,8 @@ class Config:
     @property
     def default_cpu_name(self) -> str:
         return self.config.get('Defaults', 'CPUName')
+
+    @property
+    def enable_logs(self) -> bool:
+        return self.config.getboolean('Logs', 'EnableLogs')
+
