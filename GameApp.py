@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
 from views.MainMenuView import MainMenuView
 from views.GameView import GameView
+from utils.GameLogger import GameLogger
 from Game import Game
 from config.config import Config
 
@@ -9,6 +10,7 @@ class GameApp(QMainWindow):
         super().__init__()
         self.game_instance = Game()
         self.config = Config()
+        self.game_logger = None
 
         self.setWindowTitle('Castle Wars')
         self.setFixedSize(int(self.config.window_width), int(self.config.window_height))
@@ -33,6 +35,8 @@ class GameApp(QMainWindow):
             raise ValueError('Players must be assigned before running the game.')
         else:
             self.switch_view(GameView, self.game_instance, self.card_picked, self.back_to_main_menu)
+            if self.config.enable_logs:
+                self.game_logger = GameLogger()
 
     def start_sp_game(self) -> None:
         default_player_names = [self.config.default_player_name, self.config.default_cpu_name]
@@ -66,7 +70,11 @@ class GameApp(QMainWindow):
         self.current_view.update_last_played_card_label(card_label)
 
         self.game_instance.set_game_status()
+        if self.game_logger is not None:
+            self.game_logger.log_move(self.game_instance, card)
+
         self.current_view.handle_game_status(self.game_instance.game_status)
+
         if self.game_instance.game_status == 0:
             self.game_instance.change_current_player()
             self.current_view.update_current_turn_marker()

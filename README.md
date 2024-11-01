@@ -44,7 +44,6 @@ Contributions are welcome! If you'd like to contribute to the project, please fo
 ## TODO List:
 
 - **Deck Editor:** Implement a deck editor to allow players to customize their card decks.
-- **Game Logging:** Log game results along with the cards played to track progress and analyze strategies.
 - **GUI Tweaks:** Adding a navigation bar for exiting games and other small stuff.
 - **Config Loading:** Revise the way App's config is handled.
 - **Save Player Profiles:** Make it possible for player to save his preferences and decks.
