@@ -10,7 +10,6 @@ class Game:
         self.current_player = None
         self.game_status = 0
         self.game_mode = 0
-        self.turn_count = 1
 
     def setup_singleplayer(self, default_player_names) -> None:
         self.player1 = HumanPlayer(name=default_player_names[0])
@@ -18,7 +17,6 @@ class Game:
         self.current_player = self.player1
         self.game_status = 0
         self.game_mode = 1
-        self.turn_count = 1
 
     def setup_multiplayer(self, default_player_names) -> None:
         self.player1 = HumanPlayer(name=default_player_names[0] + '1')
@@ -26,7 +24,6 @@ class Game:
         self.current_player = self.player1
         self.game_status = 0
         self.game_mode = 2
-        self.turn_count = 1
 
     def setup_cpu_only(self, default_player_names) -> None:
         self.player1 = BasicAIPlayer(name=default_player_names[0] + '1')
@@ -34,7 +31,6 @@ class Game:
         self.current_player = self.player1
         self.game_status = 0
         self.game_mode = 3
-        self.turn_count = 1
     
     def update_resources(self, player) -> None:
         for resource in player.resources:
@@ -62,7 +58,6 @@ class Game:
 
     def change_current_player(self):
         self.current_player = self.get_other_player(self.current_player)
-        self.turn_count += 1
 
     def get_action_target_player(self, player, action):
         if player is None:
