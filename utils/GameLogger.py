@@ -9,6 +9,7 @@ class GameLogger:
         self.game_state_log_file = self.init_log_file()
     
     def init_log_file(self) -> Path:
+        self.log_base_dir.mkdir(parents=True, exist_ok=True)
         csv_file = self.log_base_dir / Path(self.log_file_name)
         headers = [
             'Turn',
