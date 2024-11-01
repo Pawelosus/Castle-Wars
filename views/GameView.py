@@ -53,7 +53,7 @@ class GameView(QFrame):
         QApplication.processEvents()
 
         if isinstance(self.game_instance.current_player, AIPlayer):
-            QTimer.singleShot(1, lambda: _handle_ai_turn())
+            QTimer.singleShot(10, lambda: _handle_ai_turn())
 
     def init_last_played_cards_hbox(self) -> None:
         def init_card(sprite_path) -> QLabel:
