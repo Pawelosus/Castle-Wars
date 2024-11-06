@@ -22,6 +22,7 @@ class GameLogger:
             'Opponent Fence HP',
             'Opponent Resources',
             'Card Played',
+            'Is discarded',
             'Game Status'
         ]
 
@@ -31,7 +32,7 @@ class GameLogger:
                 writer.writerow(headers)
         return csv_file
 
-    def log_move(self, game_data, card_played) -> None:
+    def log_move(self, game_data, card_played, card_discarded) -> None:
         if not self.game_state_log_file.is_file():
             raise FileNotFoundError('Cannot find the game_state_data.csv file!')
 
@@ -50,6 +51,7 @@ class GameLogger:
                 other_player.fence_hp,
                 other_player.resources,
                 card_played.id,
+                card_discarded,
                 game_data.game_status
             ])
 

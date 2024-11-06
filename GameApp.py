@@ -71,7 +71,7 @@ class GameApp(QMainWindow):
 
         self.game_instance.set_game_status()
         if self.game_logger is not None:
-            self.game_logger.log_move(self.game_instance, card)
+            self.game_logger.log_move(self.game_instance, card, discarded)
 
         self.current_view.handle_game_status(self.game_instance.game_status)
 
