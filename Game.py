@@ -12,29 +12,57 @@ class Game:
         self.game_mode = 0
         self.turn_count = 1
 
-    def setup_singleplayer(self, default_player_names) -> None:
-        self.player1 = HumanPlayer(name=default_player_names[0])
-        self.player2 = BasicAIPlayer(name=default_player_names[1])
+    def setup_game(
+        self, mode: str, players: tuple, default_player_names: list,
+        player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
+    ) -> None:
+        self.player1 = players[0](name=default_player_names[0], preferred_deck_file=player1_deck)
+        self.player2 = players[1](name=default_player_names[1], preferred_deck_file=player2_deck)
         self.current_player = self.player1
         self.game_status = 0
-        self.game_mode = 1
         self.turn_count = 1
 
-    def setup_multiplayer(self, default_player_names) -> None:
-        self.player1 = HumanPlayer(name=default_player_names[0] + '1')
-        self.player2 = HumanPlayer(name=default_player_names[1] + '2')
-        self.current_player = self.player1
-        self.game_status = 0
-        self.game_mode = 2
-        self.turn_count = 1
+        game_modes = {'singleplayer': 1, 'multiplayer': 2, 'cpu_only': 3}
+        self.game_mode = game_modes.get(mode, 0)
 
-    def setup_cpu_only(self, default_player_names) -> None:
-        self.player1 = BasicAIPlayer(name=default_player_names[0] + '1')
-        self.player2 = BasicAIPlayer(name=default_player_names[1] + '2')
-        self.current_player = self.player1
-        self.game_status = 0
-        self.game_mode = 3
-        self.turn_count = 1
+    def setup_singleplayer(
+        self, default_player_names: list,
+        player1_type: type = HumanPlayer, player2_type: type = BasicAIPlayer,
+        player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
+    ) -> None:
+        self.setup_game(
+            mode='singleplayer',
+            players=(player1_type, player2_type),
+            default_player_names=default_player_names,
+            player1_deck=player1_deck,
+            player2_deck=player2_deck
+        )
+
+    def setup_multiplayer(
+        self, default_player_names: list,
+        player1_type: type = HumanPlayer, player2_type: type = HumanPlayer,
+        player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
+    ) -> None:
+        self.setup_game(
+            mode='cpu_only',
+            players=(player1_type, player2_type),
+            default_player_names=default_player_names,
+            player1_deck=player1_deck,
+            player2_deck=player2_deck
+        )
+
+    def setup_cpu_only(
+        self, default_player_names: list,
+        player1_type: type = BasicAIPlayer, player2_type: type = BasicAIPlayer,
+        player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
+    ) -> None:
+        self.setup_game(
+            mode='cpu_only',
+            players=(player1_type, player2_type),
+            default_player_names=default_player_names,
+            player1_deck=player1_deck,
+            player2_deck=player2_deck
+        )
     
     def update_resources(self, player) -> None:
         for resource in player.resources:
