@@ -1,12 +1,16 @@
-from models.Deck import Deck
+from DeckManager import DeckManager
 from models.Card import Card
+from models.Deck import Deck
 from resources.resource_names import resource_names
 from typing import Union
+from pathlib import Path
 
 class Player:
-    def __init__(self, name) -> None:
-        self.deck = Deck()
+    def __init__(self, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
         self.name = name
+        self.preferred_deck_file = preferred_deck_file
+        
+        self.deck = self.init_deck()
         self.hand = self.init_hand()
         self.castle_hp = 30
         self.fence_hp = 10
@@ -25,6 +29,9 @@ class Player:
             card = self.deck.draw_card()
             hand.append(card)        
         return hand
+
+    def init_deck(self) -> Deck:
+        return DeckManager.load_deck(self.preferred_deck_file)
 
     def get_playable_cards(self) -> list:
         playable_cards = [card for card in self.hand if card is not None and card.is_playable(self.resources)]
@@ -45,8 +52,10 @@ class Player:
                     self.hand[i] = new_card
                     return new_card
                 else:
-                    return None  # Deck is empty; TODO: Make a check to not attempt drawing a card if empty.
-        return None  # Hand is full; TODO: I dont like this.
+                    # If deck runs out of cards, refill the deck and attempt to draw again
+                    self.deck = self.init_deck()
+                    return self.draw_card() 
+        return None  # Hand is full
     
     def discard_card(self, card) -> None:
         if card in self.hand:

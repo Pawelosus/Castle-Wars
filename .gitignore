@@ -2,3 +2,7 @@ venv
 __pycache__
 *.log
 *.csv
+*.json
+!cards.json
+!default_deck.json
+!pyrightconfig.json

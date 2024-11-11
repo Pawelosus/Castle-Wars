@@ -3,9 +3,20 @@ from typing import List, Tuple
 
 class Config:
     def __init__(self, file_path='config/config.ini'):
+        self.config_file_path = file_path
         self.config = configparser.ConfigParser()
         self.config.read(file_path)
+    
+    def set(self, section: str, option: str, value: str) -> None:
+        """Set a configuration value."""
+        if not self.config.has_section(section):
+            self.config.add_section(section)
+        self.config.set(section, option, value)
 
+        # Overwrite the .ini file
+        with open(self.config_file_path, 'w') as configfile:
+            self.config.write(configfile)
+    
     @property
     def window_width(self) -> str:
         return self.config.get('Window', 'Width')
@@ -49,6 +60,10 @@ class Config:
     @property
     def default_cpu_name(self) -> str:
         return self.config.get('Defaults', 'CPUName')
+
+    @property
+    def preferred_deck(self) -> str:
+        return self.config.get('Player', 'PreferredDeck', fallback='default_deck_json')
 
     @property
     def enable_logs(self) -> bool:
