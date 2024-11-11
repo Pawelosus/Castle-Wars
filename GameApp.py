@@ -41,12 +41,14 @@ class GameApp(QMainWindow):
 
     def start_sp_game(self) -> None:
         default_player_names = [self.config.default_player_name, self.config.default_cpu_name]
-        self.game_instance.setup_singleplayer(default_player_names)
+        preferred_player_deck = self.config.preferred_deck
+        self.game_instance.setup_singleplayer(default_player_names, player1_deck=preferred_player_deck)
         self.start_game()
 
     def start_mp_game(self) -> None:
         default_player_names = [self.config.default_player_name + '1', self.config.default_player_name + '2']
-        self.game_instance.setup_multiplayer(default_player_names)
+        preferred_player_deck = self.config.preferred_deck
+        self.game_instance.setup_singleplayer(default_player_names, player1_deck=preferred_player_deck)
         self.start_game()
 
     def start_cpu_game(self) -> None:

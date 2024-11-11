@@ -16,7 +16,7 @@ class CardCounterLabel(QWidget):
         layout = QVBoxLayout(self)
 
         # Card art using QLabel
-        self.card_label = CardLabel(self.card)
+        self.card_label = CardLabel(self.card, interactable=False)
 
         # Counter using QSpinBox
         self.counter = QSpinBox(self)

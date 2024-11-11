@@ -118,6 +118,7 @@ class DeckManagerView(QFrame):
         try:
             self.save_deck('custom_deck.json')
             QMessageBox.information(self, "Success", "Deck set as preferred successfully!")
+            self.back_to_main_menu_callback()
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to set preferred deck: {e}")
 

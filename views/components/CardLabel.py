@@ -7,9 +7,10 @@ class CardLabel(QLabel):
     clicked = pyqtSignal('QWidget')
     ctrl_clicked = pyqtSignal('QWidget')
 
-    def __init__(self, card) -> None:
+    def __init__(self, card, interactable: bool = True) -> None:
         super().__init__()
         self.card = card
+        self.interactable = interactable
 
         self.init_label()
 
@@ -35,6 +36,8 @@ class CardLabel(QLabel):
         self.setGraphicsEffect(opacity_effect)
 
     def mousePressEvent(self, event) -> None:
+        if not self.interactable:
+            return  # Ignore the event if not interactable
         if event.button() == Qt.MouseButton.LeftButton:
             if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
                 self.ctrl_clicked.emit(self)
@@ -50,9 +53,13 @@ class CardLabel(QLabel):
                     widget.deleteLater()
         
     def enterEvent(self, event) -> None:
+        if not self.interactable:
+            return
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
     def leaveEvent(self, event) -> None:
+        if not self.interactable:
+            return
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def convert_card_id_to_file_name(self, card_id) -> str:

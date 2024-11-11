@@ -60,6 +60,11 @@ class DeckManager:
         deck_dir = Path(__file__).parent / 'resources' / 'decks'
         deck_path = deck_dir / deck_file
 
+        # Check if the deck file exists, fallback to default_deck.json if not
+        if not deck_path.exists():
+            print(f"Warning: Deck file '{deck_file}' not found. Using 'default_deck.json' instead.")
+            deck_path = deck_dir / 'default_deck.json'
+
         # Load the deck configuration
         deck_dict = DeckManager._load_json(deck_path)
         cards_data = DeckManager._get_cards_data()
