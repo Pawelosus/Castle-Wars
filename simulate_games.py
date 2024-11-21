@@ -1,4 +1,7 @@
 from Game import Game
+from models.AIPlayer import AIPlayer
+from models.BasicAIPlayer import BasicAIPlayer
+from models.RuleBasedAIPlayer import RuleBasedAIPlayer
 from utils.GameLogger import GameLogger
 from config.config import Config
 from argparse import ArgumentParser
@@ -8,6 +11,11 @@ game_results = {
     'wins': 0,
     'losses': 0,
     'draws': 0,
+}
+
+player_types = {
+    'BasicAIPlayer': BasicAIPlayer,
+    'RuleBasedAIPlayer': RuleBasedAIPlayer,
 }
 
 def print_summary(num_games: int) -> None:
@@ -34,10 +42,11 @@ def handle_game_result(game_result: int) -> None:
 
 def handle_turn(game_instance: Game, logger: Optional[GameLogger]) -> None:
     current_player = game_instance.current_player
+    opponent = game_instance.get_other_player(current_player)
     if current_player is None:
         raise ValueError('current_player cannot be None')
     
-    card, discarded = current_player.take_turn()
+    card, discarded = current_player.take_turn(opponent)
     if not discarded:
         game_instance.use_card_effect(current_player, card)
         current_player.spend_resources(card)
@@ -53,7 +62,7 @@ def handle_turn(game_instance: Game, logger: Optional[GameLogger]) -> None:
     if game_instance.game_status == 0:
         game_instance.change_current_player()
 
-def play_game(player1_deck: str, player2_deck: str, enable_logs: bool) -> int:
+def play_game(player1_type: type, player2_type: type, player1_deck: str, player2_deck: str, enable_logs: bool) -> int:
     config = Config()
     game_instance = Game()
     player_names = [config.default_cpu_name + '1', config.default_cpu_name + '2']
@@ -61,6 +70,8 @@ def play_game(player1_deck: str, player2_deck: str, enable_logs: bool) -> int:
 
     game_instance.setup_cpu_only(
         default_player_names = player_names,
+        player1_type = player1_type,
+        player2_type = player2_type,
         player1_deck = player1_deck,
         player2_deck = player2_deck
     )
@@ -69,25 +80,31 @@ def play_game(player1_deck: str, player2_deck: str, enable_logs: bool) -> int:
     
     return game_instance.game_status
 
-def simulate_games(num_games: int, player1_deck: str, player2_deck: str, enable_logs: bool) -> None:
+def simulate_games(num_games: int, player1_type: type, player2_type: type, player1_deck: str, player2_deck: str, enable_logs: bool) -> None:
     for _ in range(num_games):
-        game_result = play_game(player1_deck, player2_deck, enable_logs)
+        game_result = play_game(player1_type, player2_type, player1_deck, player2_deck, enable_logs)
         handle_game_result(game_result)
 
     print_summary(num_games)
 
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-num_games', type=int, default=10, help='number of games to simulate')
+    parser.add_argument('-player1_type', type=str, default='BasicAIPlayer', help='AI model for player1')
+    parser.add_argument('-player2_type', type=str, default='BasicAIPlayer', help='AI model for player2')
     parser.add_argument('-player1_deck', type=str, default='default_deck', help='name of the player1 deck')
     parser.add_argument('-player2_deck', type=str, default='default_deck', help='name of the player2 deck')
     parser.add_argument('--enable_logs', action='store_true', help='enable game state logging')
     args = parser.parse_args()
 
     try:
+        player1_type = player_types.get(args.player1_type)
+        player2_type = player_types.get(args.player2_type)
         args.player1_deck += '.json'
         args.player2_deck += '.json'
-        simulate_games(args.num_games, args.player1_deck, args.player2_deck, args.enable_logs)
+
+        simulate_games(args.num_games, player1_type, player2_type, args.player1_deck, args.player2_deck, args.enable_logs)
     except ValueError as e:
         print(f'Error: {e}')
 

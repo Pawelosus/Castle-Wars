@@ -102,19 +102,16 @@ class Game:
             return player
 
     def use_card_effect(self, player, card):
-        actions = card.effect.split(';')  # Given that cards can have multiple actions we handle them seperately.
+        actions = card.effect.split(';')  # Handle multiple actions separately
         for action in actions:
-            action_parts = action.split(' ') 
+            action_parts = action.split(' ')
 
-            action_value =  action_parts[-1]
-            if action_value[0] == '+':
-                action_value = int(action_value[1:])
-            elif action_value[0] == '-':
-                action_value = int(action_value[1:]) * -1
-            else:
-                action_value = int(action_value)  # Assume the value is positive if a sign is missing
+            # Get the keyword (e.g., "castle", "attack", "fence")
+            keyword = action_parts[0]
+            action_value = card.get_effect_value(keyword)
             
             action_target_player = self.get_action_target_player(player, action_parts[:-1])
+            
             if 'transfer' in action:
                 other_player = self.get_other_player(action_target_player)
                 action_target_player.transfer_resources(other_player, action_value)
