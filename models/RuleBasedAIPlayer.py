@@ -1,19 +1,19 @@
-from models.Player import Player
 from models.AIPlayer import AIPlayer
 from models.Card import Card
 from typing import Tuple, Union
 from pathlib import Path
 
 class RuleBasedAIPlayer(AIPlayer):
-    def __init__(self, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
-        super().__init__(name, preferred_deck_file)
+    def __init__(self, id: int, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
+        super().__init__(id, name, preferred_deck_file)
 
     def _get_first_playable_card(self, card_getter_func) -> Union[Card, None]:
         """Helper function to get the first playable card from a specific category."""
         return next(iter(card_getter_func()), None)
 
-    def take_turn(self, opponent: Player) -> Tuple[Card, bool]:
+    def take_turn(self, game_state: dict) -> Tuple[Card, bool]:
         is_discarded = False
+        opponent = game_state['other_player']
 
         # === Winning Move Priority ===
         # Rule 1: Play any castle-building card if it guarantees a win

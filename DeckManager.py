@@ -79,7 +79,6 @@ class DeckManager:
                 deck.append(card)
 
         deck_obj = Deck(deck)
-        deck_obj.shuffle()  # Shuffle the deck on load
         return deck_obj
 
     @staticmethod

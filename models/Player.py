@@ -1,19 +1,21 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 from numpy.random import randint
-
 from DeckManager import DeckManager
 from models.Card import Card
 from models.Deck import Deck
 from resources.resource_names import resource_names
 
 class Player:
-    def __init__(self, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
+    def __init__(self, id: int, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json', deck: Optional[Deck] = None, hand: Optional[list] = None) -> None:
+        self.id = id
         self.name = name
         self.preferred_deck_file = preferred_deck_file
         
-        self.deck = self.init_deck()
-        self.hand = self.init_hand()
+        # If deck or hand is not provided, initialize them
+        self.deck = deck if deck else self.init_deck()
+        self.hand = hand if hand else self.init_hand()
+
         self.castle_hp = 30
         self.fence_hp = 10
         self.resources = [
@@ -107,7 +109,7 @@ class Player:
     
     def discard_card(self, card) -> None:
         if card in self.hand:
-            idx = self.hand.index(card)
+            idx = self.hand.index(card)  # Find the index of the card
             self.hand[idx] = None
         else:
             raise ValueError('Card not found in hand')
@@ -154,4 +156,39 @@ class Player:
         raise ValueError(f'Invalid action "{action}" not found in resource names: {list(resource_names.keys())}')
 
     def spend_resources(self, card) -> None:
-        self.resources[card.material_type][1] -= card.cost
+        self.resources[int(card.material_type)][1] -= card.cost
+
+    # === State methods ===
+
+    def to_state(self) -> dict:
+        """Serialize Player's state into a dictionary"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'preferred_deck_file': self.preferred_deck_file,
+            'deck': self.deck.to_state() if self.deck else None,
+            'hand': [card.to_state() for card in self.hand],
+            'castle_hp': self.castle_hp,
+            'fence_hp': self.fence_hp,
+            'resources': [row[:] for row in self.resources],
+            'preferred_castle_color': self.preferred_castle_color,
+            'preferred_fence_color': self.preferred_fence_color,
+        }
+
+    @classmethod
+    def from_state(cls, state: dict) -> 'Player':
+        player = cls(
+            id = state['id'],
+            name = state['name'],
+            preferred_deck_file = state['preferred_deck_file'],
+            deck = Deck.from_state(state['deck']) if state.get('deck') else None,
+            hand = [Card.from_state(card_state) for card_state in state.get('hand', [])]
+        )
+        player.castle_hp = state['castle_hp']
+        player.fence_hp = state['fence_hp']
+        player.resources = [row[:] for row in state['resources']]
+        player.preferred_castle_color = state['preferred_castle_color']
+        player.preferred_fence_color = state['preferred_fence_color']
+
+        return player
+

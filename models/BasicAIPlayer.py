@@ -5,8 +5,8 @@ from typing import Tuple, Union
 from pathlib import Path
 
 class BasicAIPlayer(AIPlayer):
-    def __init__(self, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
-        super().__init__(name, preferred_deck_file)
+    def __init__(self, id: int, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json') -> None:
+        super().__init__(id, name, preferred_deck_file)
 
     def take_turn(self, opponent: Player) -> Tuple[Card, bool]:
         playable_cards = self.get_playable_cards()

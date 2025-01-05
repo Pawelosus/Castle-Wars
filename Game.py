@@ -1,7 +1,9 @@
+from models.Player import Player
 from models.HumanPlayer import HumanPlayer
 from models.AIPlayer import AIPlayer
 from models.BasicAIPlayer import BasicAIPlayer
-from typing import Union
+from utils.GameLogger import GameLogger
+from typing import Union, Tuple, Optional
 
 class Game:     
     def __init__(self):
@@ -16,8 +18,8 @@ class Game:
         self, mode: str, players: tuple, default_player_names: list,
         player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
     ) -> None:
-        self.player1 = players[0](name=default_player_names[0], preferred_deck_file=player1_deck)
-        self.player2 = players[1](name=default_player_names[1], preferred_deck_file=player2_deck)
+        self.player1 = players[0](id=1, name=default_player_names[0], preferred_deck_file=player1_deck)
+        self.player2 = players[1](id=2, name=default_player_names[1], preferred_deck_file=player2_deck)
         self.current_player = self.player1
         self.game_status = 0
         self.turn_count = 1
@@ -63,7 +65,41 @@ class Game:
             player1_deck=player1_deck,
             player2_deck=player2_deck
         )
-    
+
+    def apply_move(self, move: Tuple, logger: Optional[GameLogger] = None) -> None:
+        """Apply the given move to the game state."""
+        card, discarded = move
+        assert self.current_player is not None
+
+        # Apply card effect if not discarded
+        if not discarded:
+            self.use_card_effect(self.current_player, card)
+            self.current_player.spend_resources(card)
+
+        # Discard and draw the card
+        self.current_player.discard_card(card)
+        self.current_player.draw_card()
+
+        # Update opponent resources (if applicable)
+        self.update_resources(self.get_other_player(self.current_player))
+
+        # Set the game status after the move
+        self.set_game_status()
+
+        if logger is not None:
+            logger.log_move(self, card, discarded)
+
+        if self.game_status == 0:
+            self.change_current_player()
+
+    def get_possible_moves(self) -> list:
+        """Gets all possible moves that current player can make"""
+        assert self.current_player is not None
+        playable_cards = self.current_player.get_playable_cards()  # List of Card objects
+        possible_moves = [(card, False) for card in playable_cards]  # Play the card
+        possible_moves.extend((card, True) for card in self.current_player.hand)  # Discard the card
+        return possible_moves
+
     def update_resources(self, player) -> None:
         for resource in player.resources:
             resource[1] += resource[0]
@@ -142,3 +178,37 @@ class Game:
         else:
             self.game_status = 0  # No winner yet
 
+    def to_state(self) -> dict:
+        if self.player1 is None or self.player2 is None or self.current_player is None:
+            raise ValueError("Players or current player have not been initialized properly.")
+
+        return {
+            'game_mode': self.game_mode,
+            'turn_count': self.turn_count,
+            'current_player_id': self.current_player.id,
+            'other_player': self.player1 if self.current_player is self.player2 else self.player2,  # required for AI logic
+            'player1': self.player1.to_state(),
+            'player2': self.player2.to_state(),
+            'game_status': self.game_status,
+        }
+
+    @classmethod
+    def from_state(cls, state: dict):
+        game = cls()
+
+        # Set attributes from the state
+        game.game_mode = state['game_mode']
+        game.turn_count = state['turn_count']
+        game.player1 = Player.from_state(state['player1'])
+        game.player2 = Player.from_state(state['player2'])
+        
+        # Link current_player to player1 or player2
+        if state['current_player_id'] == game.player1.id:
+            game.current_player = game.player1
+        elif state['current_player_id'] == game.player2.id:
+            game.current_player = game.player2
+        else:
+            raise ValueError("Invalid current_player ID in state")
+
+        game.game_status = state['game_status']
+        return game
