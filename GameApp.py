@@ -1,8 +1,11 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
+from models.HumanPlayer import HumanPlayer
+from models.RuleBasedAIPlayer import RuleBasedAIPlayer
 from views.MainMenuView import MainMenuView
 from views.GameView import GameView
 from views.DeckManagerView import DeckManagerView
 from utils.GameLogger import GameLogger
+from utils.GameResourcesManager import GameResourcesManager
 from Game import Game
 from config.config import Config
 
@@ -39,10 +42,28 @@ class GameApp(QMainWindow):
             if self.config.enable_logs:
                 self.game_logger = GameLogger()
 
-    def start_sp_game(self) -> None:
+    def start_sp_game(self, selected_ai_model_text: str, selected_ai_deck: str, is_player_first: bool) -> None:
+        selected_ai_model = GameResourcesManager.resolve_ai_model(selected_ai_model_text)
         default_player_names = [self.config.default_player_name, self.config.default_cpu_name]
         preferred_player_deck = self.config.preferred_deck
-        self.game_instance.setup_singleplayer(default_player_names, player1_deck=preferred_player_deck)
+
+        if is_player_first:
+            player1_type = HumanPlayer
+            player2_type = selected_ai_model
+            player1_deck = preferred_player_deck
+            player2_deck = selected_ai_deck
+        else:
+            player1_type = selected_ai_model
+            player2_type = HumanPlayer
+            player1_deck = selected_ai_deck
+            player2_deck = preferred_player_deck
+
+        self.game_instance.setup_singleplayer(default_player_names,
+            player1_type=player1_type,
+            player2_type=player2_type,
+            player1_deck=player1_deck,
+            player2_deck=player2_deck
+        )
         self.start_game()
 
     def start_mp_game(self) -> None:
@@ -53,7 +74,7 @@ class GameApp(QMainWindow):
 
     def start_cpu_game(self) -> None:
         default_player_names = [self.config.default_cpu_name + '1', self.config.default_cpu_name + '2']
-        self.game_instance.setup_cpu_only(default_player_names)
+        self.game_instance.setup_cpu_only(default_player_names, player2_type=RuleBasedAIPlayer)
         self.start_game()
 
     def show_deck_manager(self) -> None:

@@ -40,7 +40,9 @@ class GameView(QFrame):
 
     def start_turn(self) -> None:
         def _handle_ai_turn():
-            card, discarded = self.game_instance.current_player.take_turn()
+            current_player = self.game_instance.current_player
+            game_state = self.game_instance.to_state()
+            card, discarded = current_player.take_turn(game_state)
             card_label = CardLabel(card)
             if discarded:
                 discard_label = card_label.findChild(CardDiscardLabel)
