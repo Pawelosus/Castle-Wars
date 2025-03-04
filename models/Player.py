@@ -90,6 +90,9 @@ class Player:
     
     # === Gameplay methods ===
 
+    def is_current_player(self, current_player_id: int) -> bool:
+        return self.id == current_player_id
+
     def has_empty_hand(self) -> bool:
         """Returns True if the player's hand consists only of None cards"""
         return all(card is None for card in self.hand)

@@ -2,6 +2,8 @@ from models.Player import Player
 from models.HumanPlayer import HumanPlayer
 from models.AIPlayer import AIPlayer
 from models.BasicAIPlayer import BasicAIPlayer
+from models.Card import Card
+from DeckManager import DeckManager
 from utils.GameLogger import GameLogger
 from typing import Union, Tuple, Optional
 
@@ -13,6 +15,8 @@ class Game:
         self.game_status = 0
         self.game_mode = 0
         self.turn_count = 1
+
+        self.all_cards = DeckManager.load_all_cards()
 
     def setup_game(
         self, mode: str, players: tuple, default_player_names: list,
@@ -92,13 +96,6 @@ class Game:
         if self.game_status == 0:
             self.change_current_player()
 
-    def get_possible_moves(self) -> list:
-        """Gets all possible moves that current player can make"""
-        assert self.current_player is not None
-        playable_cards = self.current_player.get_playable_cards()  # List of Card objects
-        possible_moves = [(card, False) for card in playable_cards]  # Play the card
-        possible_moves.extend((card, True) for card in self.current_player.hand)  # Discard the card
-        return possible_moves
 
     def update_resources(self, player) -> None:
         for resource in player.resources:
@@ -136,6 +133,28 @@ class Game:
             return self.get_other_player(player)
         else:
             return player
+
+    def get_legal_moves(self) -> list[Tuple[Card, bool]]:
+        """Gets all legal moves that the current player could make based on their resources"""
+        if self.current_player is None:
+            raise ValueError("Current player is not set.")
+        
+        legal_moves = []
+        for card in self.all_cards:
+            if card.is_playable(self.current_player.resources):
+                legal_moves.append((card, False))  # (card, False) means play the card
+            legal_moves.append((card, True))  # (card, True) means discard the card
+        return legal_moves
+
+    def get_possible_moves(self) -> list:
+        """Gets all possible moves that current player can make based on their hand"""
+        if self.current_player is None:
+            raise ValueError("Current player is not set.")
+        
+        playable_cards = self.current_player.get_playable_cards()  # List of Card objects
+        possible_moves = [(card, False) for card in playable_cards]  # Play the card
+        possible_moves.extend((card, True) for card in self.current_player.hand)  # Discard the card
+        return possible_moves
 
     def use_card_effect(self, player, card):
         actions = card.effect.split(';')  # Handle multiple actions separately
