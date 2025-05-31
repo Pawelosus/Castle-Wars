@@ -8,12 +8,11 @@ class GameResourcesManager:
     def resolve_ai_model(ai_model_name: str):
         """Resolve AI model string to the corresponding class."""
         try:
-            # Dynamically import the module
             module = importlib.import_module(f"models.{ai_model_name}")
-            for name, obj in inspect.getmembers(module, inspect.isclass):
-                if issubclass(obj, AIPlayer) and obj is not AIPlayer:
-                    return obj
-        except (ImportError, AttributeError):
+            cls = getattr(module, ai_model_name)
+            if issubclass(cls, AIPlayer):
+                return cls
+        except (ImportError, AttributeError, TypeError):
             return AIPlayer
 
     @staticmethod
@@ -30,7 +29,7 @@ class GameResourcesManager:
             try:
                 module = importlib.import_module(f"models.{module_name}")
                 for name, obj in inspect.getmembers(module, inspect.isclass):
-                    if issubclass(obj, AIPlayer) and obj is not AIPlayer:
+                    if issubclass(obj, AIPlayer) and obj is not AIPlayer and obj.__module__ == module.__name__:
                         ai_models.append(name)
             except (ImportError, AttributeError):
                 continue

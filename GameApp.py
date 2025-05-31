@@ -88,7 +88,6 @@ class GameApp(QMainWindow):
             self.game_instance.current_player.spend_resources(card)
 
         self.game_instance.current_player.discard_card(card)
-        self.game_instance.current_player.draw_card()
 
         # Updating resources
         self.game_instance.update_resources(self.game_instance.get_other_player(self.game_instance.current_player))
@@ -97,8 +96,11 @@ class GameApp(QMainWindow):
         self.current_view.update_last_played_card_label(card_label)
 
         self.game_instance.set_game_status()
+
         if self.game_logger is not None:
             self.game_logger.log_move(self.game_instance, card, discarded)
+
+        self.game_instance.current_player.draw_card()
 
         self.current_view.handle_game_status(self.game_instance.game_status)
 

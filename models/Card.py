@@ -34,4 +34,6 @@ class Card:
     @classmethod
     def from_state(cls, state: dict) -> 'Card':
         """Create a Card instance from a dictionary."""
-        return cls(**state)
+        from DeckManager import DeckManager
+        card_id = state["id"]
+        return DeckManager.get_card_by_id(card_id)
