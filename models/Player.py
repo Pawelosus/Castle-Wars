@@ -170,7 +170,7 @@ class Player:
             'name': self.name,
             'preferred_deck_file': self.preferred_deck_file,
             'deck': self.deck.to_state() if self.deck else None,
-            'hand': [card.to_state() for card in self.hand],
+            'hand': [card.to_state() for card in self.hand if card is not None],
             'castle_hp': self.castle_hp,
             'fence_hp': self.fence_hp,
             'resources': [row[:] for row in self.resources],

@@ -80,9 +80,8 @@ class Game:
             self.use_card_effect(self.current_player, card)
             self.current_player.spend_resources(card)
 
-        # Discard and draw the card
+        # Discard the card
         self.current_player.discard_card(card)
-        self.current_player.draw_card()
 
         # Update opponent resources (if applicable)
         self.update_resources(self.get_other_player(self.current_player))
@@ -94,8 +93,8 @@ class Game:
             logger.log_move(self, card, discarded)
 
         if self.game_status == 0:
+            self.current_player.draw_card()
             self.change_current_player()
-
 
     def update_resources(self, player) -> None:
         for resource in player.resources:
@@ -164,9 +163,9 @@ class Game:
             # Get the keyword (e.g., "castle", "attack", "fence")
             keyword = action_parts[0]
             action_value = card.get_effect_value(keyword)
-            
+
             action_target_player = self.get_action_target_player(player, action_parts[:-1])
-            
+
             if 'transfer' in action:
                 other_player = self.get_other_player(action_target_player)
                 action_target_player.transfer_resources(other_player, action_value)

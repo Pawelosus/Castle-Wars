@@ -33,7 +33,7 @@ class Node:
 
         return len(self.children) == len(moves)
 
-    def ucb1_value(self, exploration_weight: float = 2.5) -> float:
+    def ucb1_value(self, exploration_weight: float = 1) -> float:
         """Calculate the UCB1 value of this node."""
         assert self.parent is not None
         parent_visits = self.parent.visits
@@ -73,7 +73,7 @@ class MCTSAIPlayer(AIPlayer):
         super().__init__(id, name, preferred_deck_file)
         self.depth_limit = depth_limit
         self.iterations = iterations
-    
+
     def take_turn(self, game_state: dict) -> Tuple[Optional[object], bool]:
         """Executes the MCTS logic to determine the best move."""
         best_move = self.mcts(game_state)
@@ -94,7 +94,6 @@ class MCTSAIPlayer(AIPlayer):
         )
         
         # self.display_tree(root)
-        
         print(best_child.move[0].name, best_child.move[1], best_child.score, best_child.visits)
         return best_child.move if best_child else (None, False)
 
@@ -191,13 +190,13 @@ class MCTSAIPlayer(AIPlayer):
         """Evaluates the game state for a win/loss perspective of the AI."""
         score = 0
         if game_status == self.id:  # Win
-            score += 1
+            score += 3
         elif game_status == 0:  # Ongoing
             score += 0
         elif game_status == -1:  # Draw
             score += 0.2
         else:  # Loss
-            score += -1
+            score += -3
 
         return score
 

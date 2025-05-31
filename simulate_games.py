@@ -1,6 +1,7 @@
 import os
 from Game import Game
 from models.BasicAIPlayer import BasicAIPlayer
+from models.MCTSNNAIPlayer import MCTSNNAIPlayer
 from models.RuleBasedAIPlayer import RuleBasedAIPlayer
 from models.MCTSAIPlayer import MCTSAIPlayer
 from utils.GameLogger import GameLogger
@@ -21,6 +22,7 @@ player_types = {
     'BasicAIPlayer': BasicAIPlayer,
     'RuleBasedAIPlayer': RuleBasedAIPlayer,
     'MCTSAIPlayer': MCTSAIPlayer,
+    'MCTSNNAIPlayer': MCTSNNAIPlayer,
 }
 
 def print_summary(num_games: int) -> None:
@@ -28,12 +30,12 @@ def print_summary(num_games: int) -> None:
     draw_rate = (game_results['draws'] / num_games) * 100
     loss_rate = 100 - win_rate - draw_rate
 
-    print(f"{'Summary':-^30}")
-    print(f"Total Games:     {num_games:>6}")
-    print(f"Wins:            {game_results['wins']:>6} ({win_rate:.2f}%)")
-    print(f"Losses:          {game_results['losses']:>6} ({loss_rate:.2f}%)")
-    print(f"Ties:            {game_results['draws']:>6} ({draw_rate:.2f}%)")
-    print(f"{'-' * 30}")
+    print(f'{"Summary":-^30}')
+    print(f'Total Games:     {num_games:>6}')
+    print(f'Wins:            {game_results["wins"]:>6} ({win_rate:.2f}%)')
+    print(f'Losses:          {game_results["losses"]:>6} ({loss_rate:.2f}%)')
+    print(f'Ties:            {game_results["draws"]:>6} ({draw_rate:.2f}%)')
+    print(f'{"-" * 30}')
 
 def handle_game_result(game_result: int) -> None:
     if game_result == 1:

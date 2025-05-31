@@ -4,6 +4,7 @@ __pycache__
 *.log
 *.csv
 *.json
+*.pth
 !cards.json
 !default_deck.json
 !pyrightconfig.json

@@ -17,10 +17,11 @@ class Deck:
         return None
 
     def to_state(self) -> dict:
-        return {'cards': [card.to_state() for card in self.cards]}
+        return {'cards': [card.id for card in self.cards]}
 
     @classmethod
     def from_state(cls, state: dict) -> 'Deck':
-        cards = [Card.from_state(card_state) for card_state in state['cards']]
+        from DeckManager import DeckManager
+        cards = [DeckManager.get_card_by_id(card_id) for card_id in state['cards']]
         shuffle(cards)
         return cls(cards)
