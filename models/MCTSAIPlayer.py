@@ -5,35 +5,26 @@ from pathlib import Path
 from models.AIPlayer import AIPlayer
 from models.Card import Card
 from Game import Game
+from DeckManager import DeckManager
 
 class Node:
-    def __init__(self, game_state: dict, parent: Optional["Node"] = None, move: Optional[Tuple] = None, is_agent_turn_next: bool = True):
+    def __init__(self, game_state: dict, parent: Optional["Node"] = None, move: Optional[Tuple] = None):
         self.game_state = game_state
         self.parent = parent
         self.move = move
         self.children = []
         self.visits = 0
         self.score = 0
-        self.is_agent_turn_next = is_agent_turn_next
 
     def is_terminal(self) -> bool:
         """Check if the game state is terminal (game over)."""
         return self.game_state["game_status"] in [1, 2, -1]
 
-    def is_fully_expanded(self) -> bool:
-        """Check if all possible moves have been explored."""
-        game = Game.from_state(self.game_state)
-        current_player = game.current_player
-        assert current_player is not None
+    def is_expanded(self) -> bool:
+        """Check if Node has been expanded."""
+        return len(self.children) > 0
 
-        if self.is_agent_turn_next:
-            moves = game.get_possible_moves()  # For the current player
-        else:
-            moves = [move for move in game.get_legal_moves() if not move[1]] + [[move for move in game.get_legal_moves() if move[1]][0]]  # For the opponent
-
-        return len(self.children) == len(moves)
-
-    def ucb1_value(self, exploration_weight: float = 1) -> float:
+    def ucb1_value(self, exploration_weight: float = 0.3) -> float:
         """Calculate the UCB1 value of this node."""
         assert self.parent is not None
         parent_visits = self.parent.visits
@@ -54,13 +45,13 @@ class Node:
             if ucb1_val > best_value:
                 best_value = ucb1_val
                 best_node = child
-        
+
         return best_node
 
     def add_child(self, move: Tuple, game_state: dict) -> None:
         """Add a child node."""
         new_state = game_state
-        child_node = Node(new_state, parent=self, move=move, is_agent_turn_next=not self.is_agent_turn_next)
+        child_node = DecisionNode(new_state, parent=self, move=move)
         self.children.append(child_node)
 
     def update(self, result: float) -> None:
@@ -68,20 +59,130 @@ class Node:
         self.visits += 1
         self.score += result
 
+    def expand(self) -> None:
+        """Expand a node by adding DecisionNodes."""
+        game = Game.from_state(self.game_state)
+        moves = game.get_possible_moves() 
+
+        for move in moves:
+            temp_game = Game.from_state(self.game_state)
+            self.apply_move(temp_game, move)
+            child_state = temp_game.to_state()
+            self.add_child(move, child_state)
+
+    def apply_move(self, game: Game, move: Optional[Tuple[Card, bool]] = None, draw_card: Optional[Card] = None, swap_player: bool = False) -> None:
+        """Applies a move."""
+        current_player = game.current_player
+        other_player = game.get_other_player(current_player)
+        assert current_player is not None
+
+        if move is not None:
+            card, discarded = move
+            if not discarded:
+                game.use_card_effect(current_player, card)
+                current_player.spend_resources(card)
+            game.update_resources(other_player)
+            game.set_game_status()
+            if type(self) is DecisionNode:
+                current_player.discard_card(card)
+
+        if game.game_status == 0:
+            if draw_card:
+                current_player.draw_card(draw_card)
+            if swap_player:
+                game.change_current_player()
+
+
+class DecisionNode(Node):
+    def __init__(self, game_state: dict, parent: Optional["Node"] = None, move: Optional[Tuple] = None):
+        super().__init__(game_state, parent, move)
+        self.move_probabilties = []
+
+    def add_child(self, card_id: str, game_state: dict, probability: float = 0.0) -> None:
+        """Add a child node."""
+        new_state = game_state
+        child_node = DrawNode(new_state, parent=self, card_id=card_id, probability=probability)
+        self.children.append(child_node)
+
+    def best_child(self) -> 'Node':
+        """Sample one child based on the draw probability."""
+        if not self.children:
+            raise ValueError("DecisionNode has no children to sample from.")
+
+        children, probs = zip(*[(child, child.probability) for child in self.children])
+        return random.choices(children, weights=probs, k=1)[0]
+
+    def expand(self) -> None:
+        """Expand a node by adding DrawNodes."""
+        game = Game.from_state(self.game_state)
+        current_player = game.current_player
+        assert current_player is not None
+
+        draw_distribution = current_player.deck.get_draw_distribution()
+        if not draw_distribution:
+            temp_game = Game.from_state(self.game_state)
+            temp_current_player = temp_game.current_player
+            assert temp_current_player is not None
+            temp_current_player.deck = temp_current_player.init_deck()
+            draw_distribution = temp_current_player.deck.get_draw_distribution()
+
+        for card_id, probability in draw_distribution.items():
+            draw_card = DeckManager.get_card_by_id(card_id)
+            temp_game = Game.from_state(self.game_state)
+            self.apply_move(temp_game, draw_card=draw_card, swap_player=True)
+            child_state = temp_game.to_state()
+            self.add_child(card_id, child_state, probability)
+
+
+class DrawNode(Node):
+    def __init__(self, game_state: dict, parent: Optional["Node"] = None, card_id: str = '0:0', probability: float = 0.0):
+        super().__init__(game_state, parent)
+        self.card_id = card_id
+        self.probability = probability
+
+    def add_child(self, move: Tuple, game_state: dict) -> None:
+        """Add a child node."""
+        new_state = game_state
+        child_node = OpponentNode(new_state, parent=self, move=move)
+        self.children.append(child_node)
+
+    def best_child(self) -> 'Node':
+        """Return a random child node uniformly."""
+        if not self.children:
+            raise ValueError("DrawNode has no children to sample from.")
+        return random.choice(self.children)
+
+    def expand(self) -> None:
+        """Expand a node by adding OpponentNodes."""
+        game = Game.from_state(self.game_state)
+        moves = [move for move in game.get_legal_moves() if not move[1]] + [[move for move in game.get_legal_moves() if move[1]][0]]
+
+        for move in moves:
+            temp_game = Game.from_state(self.game_state)
+            self.apply_move(temp_game, move, draw_card=None)
+            child_state = temp_game.to_state()
+            self.add_child(move, child_state)
+
+
+class OpponentNode(Node):
+    def __init__(self, game_state: dict, parent: Optional["Node"] = None, move: Optional[Tuple] = None):
+        super().__init__(game_state, parent, move)
+
+
 class MCTSAIPlayer(AIPlayer):
-    def __init__(self, id: int, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json', depth_limit: int = 200, iterations: int = 3000):
+    def __init__(self, id: int, name: str, preferred_deck_file: Union[str, Path] = 'default_deck.json', depth_limit: int = 200, iterations: int = 1300):
         super().__init__(id, name, preferred_deck_file)
         self.depth_limit = depth_limit
         self.iterations = iterations
 
     def take_turn(self, game_state: dict) -> Tuple[Optional[object], bool]:
-        """Executes the MCTS logic to determine the best move."""
+        """Execute the MCTS logic to determine the best move."""
         best_move = self.mcts(game_state)
         return best_move
-    
+
     def mcts(self, game_state: dict) -> Tuple[Optional[object], bool]:
         # Root node creation
-        root = Node(game_state, parent=None, move=None)
+        root = OpponentNode(game_state, parent=None, move=None)
 
         for _ in range(self.iterations):
             node = self.select_node(root)
@@ -92,9 +193,9 @@ class MCTSAIPlayer(AIPlayer):
             root.children,
             key=lambda child: (child.score / child.visits if child.visits > 0 else float('-inf'), child.visits)
         )
-        
-        # self.display_tree(root)
-        print(best_child.move[0].name, best_child.move[1], best_child.score, best_child.visits)
+
+        #self.display_tree(root, max_depth=1)
+        #print(best_child.move[0].name, best_child.move[1], best_child.score, best_child.visits)
         return best_child.move if best_child else (None, False)
 
     def select_node(self, root_node: Node) -> 'Node':
@@ -103,40 +204,23 @@ class MCTSAIPlayer(AIPlayer):
         while True:
             if current_node.is_terminal():
                 return current_node
-            if not current_node.is_fully_expanded():
-                self.expand(current_node)
-            
-            # Select the best child using UCB1
+            if not current_node.is_expanded():
+                current_node.expand()
+
             best_child = current_node.best_child()
 
-            if best_child.visits == 0:
+            if best_child.visits == 0 and isinstance(best_child, DecisionNode):
                 return best_child
 
             current_node = best_child
 
-    def expand(self, node: Node) -> None:
-        """Expand a node by adding a child for an unexplored move."""
-        game = Game.from_state(node.game_state)
-        current_player = game.current_player
-
-        assert current_player is not None
-        if self.is_current_player(current_player.id):
-            moves = game.get_possible_moves()  # For the current player
-        else:
-            moves = [move for move in game.get_legal_moves() if not move[1]] + [[move for move in game.get_legal_moves() if move[1]][0]]  # For the opponent
-        
-        for move in moves:
-            temp_game = Game.from_state(node.game_state)
-            self._apply_move(temp_game, move)
-            child_state = temp_game.to_state()
-            node.add_child(move, child_state)
 
     def simulate(self, node: Node, depth_limit: int) -> float:
         game = Game.from_state(node.game_state)
         depth = 0
         total_score = 0
 
-        if node.is_terminal():
+        if not isinstance(node, DecisionNode) or node.is_terminal():
             game_status = game.game_status
             return self.evaluate(game_status)
 
@@ -145,7 +229,7 @@ class MCTSAIPlayer(AIPlayer):
             weights = [0.5 if move[1] else 1.0 for move in possible_moves]
             move = random.choices(possible_moves, weights=weights)[0]
 
-            self._apply_move(game, move)
+            game.apply_move(move)
 
             game_status = game.game_status
             total_score += self.evaluate(game_status)
@@ -153,32 +237,6 @@ class MCTSAIPlayer(AIPlayer):
 
         return total_score
 
-    def _apply_move(self, game: Game, move: Tuple[Card, bool]) -> None:
-        """
-        Applies a move.
-
-        If it's the current player's turn, normal game rules apply.
-        If it's the opponent's turn, the move is played without accessing his hand. Card draw and discards don't take effect.
-        Args:
-            game (Game): The current game instance.
-            move (Tuple[Card, bool]): A tuple representing the move (card, discarded).
-        """
-        assert game.current_player is not None
-
-        if self.is_current_player(game.current_player.id):
-            game.apply_move(move)
-            return
-
-        card, discarded = move
-        if not discarded:
-            game.use_card_effect(game.current_player, card)
-            game.current_player.spend_resources(card)
-
-        game.update_resources(game.get_other_player(game.current_player))
-        game.set_game_status()
-
-        if game.game_status == 0:
-            game.change_current_player()
 
     def backpropagate(self, node: Node, result: float) -> None:
         """Backpropagate the simulation result through the tree."""
@@ -190,13 +248,13 @@ class MCTSAIPlayer(AIPlayer):
         """Evaluates the game state for a win/loss perspective of the AI."""
         score = 0
         if game_status == self.id:  # Win
-            score += 3
+            score += 1
         elif game_status == 0:  # Ongoing
             score += 0
         elif game_status == -1:  # Draw
             score += 0.2
         else:  # Loss
-            score += -3
+            score += -1
 
         return score
 
@@ -209,16 +267,23 @@ class MCTSAIPlayer(AIPlayer):
             depth (int): Current depth in the tree, used for indentation.
             max_depth (int): The maximum depth to display.
         """
-        if depth > max_depth:  # Stop recursion if we exceed the max depth
+        if depth > max_depth:
             return
-            
-        indent = "  " * depth  # Indentation to represent tree depth
-        move = node.move[0].name if node.move else "Root"
+
+        indent = "  " * depth
+        node_type = type(node).__name__
+
+        # Shared properties
         visits = node.visits
         score = node.score
         ucb1 = node.ucb1_value() if node.parent else "N/A"
-        print(f'{indent}- Move: {move}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}')
-        
+
+        if isinstance(node, DrawNode):
+            print(f"{indent}- [{node_type}] Card ID: {node.card_id}, Prob: {node.probability:.3f}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}")
+        else:
+            move = node.move[0].name if node.move else "Root"
+            print(f"{indent}- [{node_type}] Move: {move}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}")
+
         for child in node.children:
             self.display_tree(child, depth + 1, max_depth)
 

@@ -9,9 +9,9 @@ from argparse import ArgumentParser
 
 def train(device='cpu', resume_path=None):
     csv_file = 'move_data.csv'
-    batch_size = 1024
+    batch_size = 4096
     learning_rate = 1e-3
-    epochs = 50
+    epochs = 150
     train_split = 0.8
 
     full_dataset = MoveDataset(csv_file)
