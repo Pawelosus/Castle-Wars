@@ -1,28 +1,29 @@
+import argparse
 import pandas as pd
 from pathlib import Path
 
-# Set path to game log directory
-log_dir = Path.cwd().parent / 'logs'
-
-# Get all CSV files from the directory
-csv_files = list(log_dir.glob('*.csv'))
-
-# Read and concatenate all CSVs
-df_list = []
-for file in csv_files:
-    df = pd.read_csv(file)
-
-    # Add 'Game Result' column to each row
-    game_result = df['Game Status'].iloc[-1]
-    df['Game Result'] = game_result
-
-    df_list.append(df)
-
-combined_df = pd.concat(df_list, ignore_index=True)
-
-# Output df as a file
-output_file = Path('move_data.csv')
-combined_df.to_csv(output_file, index=False)
-
-print(f'Combined {len(csv_files)} CSV files into {output_file.name}. Total rows: {len(combined_df)}.')
-
+def flatten_csv_logs(output_name: str = 'move_data.csv'):
+    log_dir = Path.cwd() / 'logs'
+    csv_files = list(log_dir.glob('*.csv'))
+ 
+    if not csv_files:
+        print('No CSV files found in logs/. Skipping merge.')
+        return
+ 
+    df_list = []
+    for file in csv_files:
+        df = pd.read_csv(file)
+        df['Game Result'] = df['Game Status'].iloc[-1]
+        df['Total Turns'] = len(df)
+        df_list.append(df)
+ 
+    combined_df = pd.concat(df_list, ignore_index=True)
+    combined_df.to_csv(output_name, index=False)
+    print(f'Combined {len(csv_files)} CSV files into {output_name}. Total rows: {len(combined_df)}.')
+ 
+ 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-name', default='move_data.csv')
+    args = parser.parse_args()
+    flatten_csv_logs(args.name)

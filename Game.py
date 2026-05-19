@@ -50,7 +50,7 @@ class Game:
         player1_deck: str = 'default_deck.json' , player2_deck: str = 'default_deck.json'
     ) -> None:
         self.setup_game(
-            mode='cpu_only',
+            mode='multiplayer',
             players=(player1_type, player2_type),
             default_player_names=default_player_names,
             player1_deck=player1_deck,
@@ -70,7 +70,7 @@ class Game:
             player2_deck=player2_deck
         )
 
-    def apply_move(self, move: Tuple, logger: Optional[GameLogger] = None) -> None:
+    def apply_move(self, move: Tuple, finish_turn: bool = True, logger: Optional[GameLogger] = None, specific_card: Optional[Card] = None) -> None:
         """Apply the given move to the game state."""
         card, discarded = move
         assert self.current_player is not None
@@ -80,21 +80,20 @@ class Game:
             self.use_card_effect(self.current_player, card)
             self.current_player.spend_resources(card)
 
-        # Discard the card
-        self.current_player.discard_card(card)
-
-        # Update opponent resources (if applicable)
-        self.update_resources(self.get_other_player(self.current_player))
-
         # Set the game status after the move
         self.set_game_status()
 
+        # Discard the card
+        self.current_player.discard_card(card)
+
         if logger is not None:
             logger.log_move(self, card, discarded)
-
+        
         if self.game_status == 0:
-            self.current_player.draw_card()
-            self.change_current_player()
+            self.current_player.draw_card(specific_card=specific_card)
+            if finish_turn:
+                self.change_current_player()
+                self.update_resources(self.current_player)  # Give passive resource gain at start of turn
 
     def update_resources(self, player) -> None:
         for resource in player.resources:

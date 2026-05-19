@@ -1,5 +1,4 @@
 import torch
-from math import log1p
 from typing import Tuple
 from ml_utils.feature_constants import FEATURE_STATS
 
@@ -38,10 +37,10 @@ def normalize_resources(res: list[int]) -> list[float]:
 def build_feature_tensor(features: dict) -> torch.Tensor:
     vec = [
         features['Player Castle HP'] / 100.0,
-        log1p(features['Player Fence HP']),
+        min(features['Player Fence HP'], 32.0) / 32.0,
         *encode_hand_to_vector(features['Player Hand']),
         features['Opponent Castle HP'] / 100.0,
-        log1p(features['Opponent Fence HP']),
+        min(features['Opponent Fence HP'], 32.0) / 32.0,
         *normalize_resources(features['Player Resources']),
         *normalize_resources(features['Opponent Resources']),
         *card_str_to_one_hot(features['Card Played']),
@@ -63,7 +62,7 @@ def extract_features_from_state(state: dict, move: Tuple) -> dict:
     return {
         'Player Castle HP': current_player['castle_hp'],
         'Player Fence HP': current_player['fence_hp'],
-        'Player Hand': current_player['hand'],
+        'Player Hand': [card['id'] if isinstance(card, dict) else card for card in current_player['hand']],
         'Opponent Castle HP': opponent['castle_hp'],
         'Opponent Fence HP': opponent['fence_hp'],
         'Player Resources': [val for sublist in current_player['resources'] for val in sublist],

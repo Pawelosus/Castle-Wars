@@ -24,15 +24,14 @@ class Node:
         """Check if Node has been expanded."""
         return len(self.children) > 0
 
-    def ucb1_value(self, exploration_weight: float = 0.3) -> float:
+    def ucb1_value(self, exploration_weight: float = 0.1) -> float:
         """Calculate the UCB1 value of this node."""
         assert self.parent is not None
-        parent_visits = self.parent.visits
 
         if self.visits == 0:
             return float('inf')  # Prioritize unvisited nodes
 
-        return (self.score / self.visits) + exploration_weight * math.sqrt(math.log(parent_visits) / self.visits)
+        return (self.score / self.visits) + exploration_weight * math.sqrt(math.log(self.parent.visits) / self.visits)
 
     def best_child(self) -> 'Node':
         """Return the child node with the highest UCB1 value."""
@@ -50,8 +49,7 @@ class Node:
 
     def add_child(self, move: Tuple, game_state: dict) -> None:
         """Add a child node."""
-        new_state = game_state
-        child_node = DecisionNode(new_state, parent=self, move=move)
+        child_node = DecisionNode(game_state, parent=self, move=move)
         self.children.append(child_node)
 
     def update(self, result: float) -> None:
@@ -70,7 +68,7 @@ class Node:
             child_state = temp_game.to_state()
             self.add_child(move, child_state)
 
-    def apply_move(self, game: Game, move: Optional[Tuple[Card, bool]] = None, draw_card: Optional[Card] = None, swap_player: bool = False) -> None:
+    def apply_move(self, game: Game, move: Optional[Tuple[Card, bool]] = None) -> None:
         """Applies a move."""
         current_player = game.current_player
         other_player = game.get_other_player(current_player)
@@ -83,85 +81,47 @@ class Node:
                 current_player.spend_resources(card)
             game.update_resources(other_player)
             game.set_game_status()
-            if type(self) is DecisionNode:
-                current_player.discard_card(card)
-
-        if game.game_status == 0:
-            if draw_card:
-                current_player.draw_card(draw_card)
-            if swap_player:
-                game.change_current_player()
 
 
 class DecisionNode(Node):
     def __init__(self, game_state: dict, parent: Optional["Node"] = None, move: Optional[Tuple] = None):
         super().__init__(game_state, parent, move)
-        self.move_probabilties = []
-
-    def add_child(self, card_id: str, game_state: dict, probability: float = 0.0) -> None:
-        """Add a child node."""
-        new_state = game_state
-        child_node = DrawNode(new_state, parent=self, card_id=card_id, probability=probability)
-        self.children.append(child_node)
-
-    def best_child(self) -> 'Node':
-        """Sample one child based on the draw probability."""
-        if not self.children:
-            raise ValueError("DecisionNode has no children to sample from.")
-
-        children, probs = zip(*[(child, child.probability) for child in self.children])
-        return random.choices(children, weights=probs, k=1)[0]
-
-    def expand(self) -> None:
-        """Expand a node by adding DrawNodes."""
-        game = Game.from_state(self.game_state)
-        current_player = game.current_player
-        assert current_player is not None
-
-        draw_distribution = current_player.deck.get_draw_distribution()
-        if not draw_distribution:
-            temp_game = Game.from_state(self.game_state)
-            temp_current_player = temp_game.current_player
-            assert temp_current_player is not None
-            temp_current_player.deck = temp_current_player.init_deck()
-            draw_distribution = temp_current_player.deck.get_draw_distribution()
-
-        for card_id, probability in draw_distribution.items():
-            draw_card = DeckManager.get_card_by_id(card_id)
-            temp_game = Game.from_state(self.game_state)
-            self.apply_move(temp_game, draw_card=draw_card, swap_player=True)
-            child_state = temp_game.to_state()
-            self.add_child(card_id, child_state, probability)
-
-
-class DrawNode(Node):
-    def __init__(self, game_state: dict, parent: Optional["Node"] = None, card_id: str = '0:0', probability: float = 0.0):
-        super().__init__(game_state, parent)
-        self.card_id = card_id
-        self.probability = probability
 
     def add_child(self, move: Tuple, game_state: dict) -> None:
         """Add a child node."""
-        new_state = game_state
-        child_node = OpponentNode(new_state, parent=self, move=move)
+        child_node = OpponentNode(game_state, parent=self, move=move)
         self.children.append(child_node)
 
-    def best_child(self) -> 'Node':
-        """Return a random child node uniformly."""
-        if not self.children:
-            raise ValueError("DrawNode has no children to sample from.")
-        return random.choice(self.children)
-
     def expand(self) -> None:
-        """Expand a node by adding OpponentNodes."""
-        game = Game.from_state(self.game_state)
-        moves = [move for move in game.get_legal_moves() if not move[1]] + [[move for move in game.get_legal_moves() if move[1]][0]]
+        """
+        Sample one draw from the weighted deck distribution and expand
+        directly into OpponentNode children.
+        """
+        temp_game = Game.from_state(self.game_state)
+        current_player = temp_game.current_player
+        assert current_player is not None
+ 
+        draw_distribution = current_player.deck.get_draw_distribution()
+        if not draw_distribution:
+            current_player.deck = current_player.init_deck()
+            draw_distribution = current_player.deck.get_draw_distribution()
+        card_ids, probs = zip(*draw_distribution.items())
+        sampled_id = random.choices(card_ids, weights=probs, k=1)[0]
+        draw_card = DeckManager.get_card_by_id(sampled_id)
 
-        for move in moves:
-            temp_game = Game.from_state(self.game_state)
-            self.apply_move(temp_game, move, draw_card=None)
-            child_state = temp_game.to_state()
-            self.add_child(move, child_state)
+        current_player.draw_card(draw_card)
+        temp_game.change_current_player()
+        post_draw_state = temp_game.to_state()
+ 
+        legal_moves = temp_game.get_legal_moves()
+        plays = [m for m in legal_moves if not m[1]]
+        discard = next((m for m in legal_moves if m[1]), None)
+        opponent_moves = plays + ([discard] if discard else [])
+ 
+        for move in opponent_moves:
+            move_game = Game.from_state(post_draw_state)
+            self.apply_move(move_game, move)
+            self.add_child(move, move_game.to_state())
 
 
 class OpponentNode(Node):
@@ -182,7 +142,7 @@ class MCTSAIPlayer(AIPlayer):
 
     def mcts(self, game_state: dict) -> Tuple[Optional[object], bool]:
         # Root node creation
-        root = OpponentNode(game_state, parent=None, move=None)
+        root = Node(game_state, parent=None, move=None)
 
         for _ in range(self.iterations):
             node = self.select_node(root)
@@ -218,24 +178,29 @@ class MCTSAIPlayer(AIPlayer):
     def simulate(self, node: Node, depth_limit: int) -> float:
         game = Game.from_state(node.game_state)
         depth = 0
-        total_score = 0
 
         if not isinstance(node, DecisionNode) or node.is_terminal():
             game_status = game.game_status
             return self.evaluate(game_status)
 
+        current_player = game.current_player
+
+        draw_card = current_player.deck.draw_card()
+        if draw_card:
+            current_player.draw_card(draw_card)
+
+        game.change_current_player()
+
         while depth < depth_limit and game.game_status == 0:
             possible_moves = game.get_possible_moves()
-            weights = [0.5 if move[1] else 1.0 for move in possible_moves]
-            move = random.choices(possible_moves, weights=weights)[0]
+            weights = [0.1 if move[1] else 1.0 for move in possible_moves]
 
+            move = random.choices(possible_moves, weights=weights)[0]
             game.apply_move(move)
 
-            game_status = game.game_status
-            total_score += self.evaluate(game_status)
             depth += 1
 
-        return total_score
+        return self.evaluate(game.game_status)
 
 
     def backpropagate(self, node: Node, result: float) -> None:
@@ -269,21 +234,15 @@ class MCTSAIPlayer(AIPlayer):
         """
         if depth > max_depth:
             return
-
+        
         indent = "  " * depth
         node_type = type(node).__name__
-
-        # Shared properties
         visits = node.visits
         score = node.score
         ucb1 = node.ucb1_value() if node.parent else "N/A"
-
-        if isinstance(node, DrawNode):
-            print(f"{indent}- [{node_type}] Card ID: {node.card_id}, Prob: {node.probability:.3f}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}")
-        else:
-            move = node.move[0].name if node.move else "Root"
-            print(f"{indent}- [{node_type}] Move: {move}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}")
-
+        move = node.move[0].name if node.move else "Root"
+        print(f"{indent}- [{node_type}] Move: {move}, Visits: {visits}, Score: {score:.2f}, UCB1: {ucb1}")
+        
         for child in node.children:
             self.display_tree(child, depth + 1, max_depth)
 

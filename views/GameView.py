@@ -39,23 +39,36 @@ class GameView(QFrame):
         self.start_turn()
 
     def start_turn(self) -> None:
-        def _handle_ai_turn():
-            current_player = self.game_instance.current_player
-            game_state = self.game_instance.to_state()
-            card, discarded = current_player.take_turn(game_state)
-            card_label = CardLabel(card)
-            if discarded:
-                discard_label = card_label.findChild(CardDiscardLabel)
-                discard_label.setVisible(True)
-
-            self.card_picked_callback(card, card_label, discarded)
-        
         self.ctrl_pressed = False
         self.display_hand()
         QApplication.processEvents()
 
         if isinstance(self.game_instance.current_player, AIPlayer):
-            QTimer.singleShot(10, lambda: _handle_ai_turn())
+            self._run_ai_turn()
+
+    def _run_ai_turn(self) -> None:
+        from workers.AIMoveWorker import AIMoveWorker
+
+        self.disable_hand_layout()  # prevent player interaction during AI turn
+
+        self._ai_worker = AIMoveWorker(          # store ref to prevent GC
+            self.game_instance.current_player,
+            self.game_instance.to_state()
+        )
+        self._ai_worker.move_ready.connect(self._on_ai_move_ready)
+        self._ai_worker.start()
+
+    def _on_ai_move_ready(self, card, discarded) -> None:
+        from views.components.CardLabel import CardLabel
+        from views.components.CardDiscardLabel import CardDiscardLabel
+
+        card_label = CardLabel(card)
+        if discarded:
+            discard_label = card_label.findChild(CardDiscardLabel)
+            if discard_label:
+                discard_label.setVisible(True)
+
+        self.card_picked_callback(card, card_label, discarded)
 
     def init_last_played_cards_hbox(self) -> None:
         def init_card(sprite_path) -> QLabel:

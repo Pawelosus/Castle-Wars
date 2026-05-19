@@ -1,5 +1,6 @@
 venv
 pypy_venv
+checkpoints/
 __pycache__
 *.log
 *.csv
