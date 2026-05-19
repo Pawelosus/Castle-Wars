@@ -52,6 +52,7 @@ class Player:
         return playable_cards[randint(len(playable_cards))]
 
     def get_random_card(self) -> Union[Card, None]:
+        """Gets a random card from Player's hand."""
         valid_cards = [card for card in self.hand if card is not None]
         if not valid_cards:
             return None
@@ -97,26 +98,37 @@ class Player:
         """Returns True if the player's hand consists only of None cards"""
         return all(card is None for card in self.hand)
 
-    def draw_card(self) -> Union[Card, None]:
-        for i, card in enumerate(self.hand):
-            if card is None:
-                new_card = self.deck.draw_card()
-                if new_card:
-                    self.hand[i] = new_card
-                    return new_card
-                else:
-                    # If deck runs out of cards, refill the deck and attempt to draw again
+    def draw_card(self, specific_card: Optional[Card] = None) -> Optional[Card]:
+        """
+        Draws into first empty hand slot.
+
+        Args:
+            specific_card: Optional specific card to draw.
+        """
+        # Find first empty hand slot
+        for i, slot in enumerate(self.hand):
+            if slot is None:
+                card = self.deck.draw_card(specific_card)
+                if card is not None:
+                    self.hand[i] = card
+                    return card
+
+                # Only reshuffle if normal draw fails (not for specific cards)
+                if specific_card is None and not self.deck.cards:
                     self.deck = self.init_deck()
-                    return self.draw_card() 
-        return None  # Hand is full
-    
+                    return self.draw_card()  # Retry normal draw
+
+                return None  # For both specific card not found and empty deck
+
+        return None  # Hand full
+
     def discard_card(self, card) -> None:
         if card in self.hand:
             idx = self.hand.index(card)  # Find the index of the card
             self.hand[idx] = None
         else:
             raise ValueError('Card not found in hand')
-    
+
     def transfer_resources(self, other_player, transfer_amount) -> None:
         """Transfer resources between players with the specified amount"""
         resource_type_count = len(resource_names)
@@ -124,32 +136,32 @@ class Player:
             actual_amount = min(self.resources[resource_type][1], transfer_amount)
             self.resources[resource_type][1] -= actual_amount
             other_player.resources[resource_type][1] +=  actual_amount
-    
+
     def receive_damage(self, incoming_damage) -> None:
         fence_damage = min(self.fence_hp, incoming_damage)
         self.fence_hp -= fence_damage
         self.castle_hp -= incoming_damage - fence_damage
         self.fence_hp = max(0, self.fence_hp)
         self.castle_hp = max(0, self.castle_hp)
-        
+
     def add_to_castle_hp(self, value) -> None:
         self.castle_hp = max(0, self.castle_hp + value)
-    
+
     def add_to_fence_hp(self, value) -> None:
         self.fence_hp = max(0, self.fence_hp + value)
-    
+
     def add_to_stacks(self, value) -> None:
         """Adds value to bricks, weapons and magic resources"""
         for resource_type in range(len(self.resources)):
             self.resources[int(resource_type)][1] = max(0, self.resources[int(resource_type)][1] + value)
-        
+
     def add_to_all(self, value) -> None:
         self.add_to_castle_hp(value)
         self.add_to_fence_hp(value)
         for resource_type in self.resources:
             for idx in range(len(resource_type)):
                 resource_type[idx] = max(1, resource_type[idx] + value)
-    
+
     def add_to_resource_based_on_action(self, action, value) -> None:
         for resource_type, resource_info in resource_names.items():
             for idx, resource_name in enumerate(resource_info):

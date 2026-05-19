@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 from typing import Tuple
 from ml_utils.feature_constants import FEATURE_STATS
 
@@ -22,7 +21,7 @@ def card_str_to_one_hot(card: str) -> torch.Tensor:
 def encode_hand_to_vector(hand: list[str]) -> list[int]:
     vector = [0] * NUM_CARDS
     for card in hand:
-        vector[card_str_to_id(card)] += 1
+        vector[card_str_to_id(card)] += 1.0
     return vector
 
 def normalize_resources(res: list[int]) -> list[float]:
@@ -31,18 +30,17 @@ def normalize_resources(res: list[int]) -> list[float]:
     Income (0, 2, 4) is divided by 5.0, stock (1, 3, 5) by 40.0.
     """
     return [
-        val / 5.0 if i % 2 == 0 else val / 40.0
+        val / 3.0 if i % 2 == 0 else val / 30.0
         for i, val in enumerate(res)
     ]
 
 def build_feature_tensor(features: dict) -> torch.Tensor:
     vec = [
-        features['Turn'] / 60.0,
         features['Player Castle HP'] / 100.0,
-        np.log1p(features['Player Fence HP']),
+        min(features['Player Fence HP'], 32.0) / 32.0,
         *encode_hand_to_vector(features['Player Hand']),
         features['Opponent Castle HP'] / 100.0,
-        np.log1p(features['Opponent Fence HP']),
+        min(features['Opponent Fence HP'], 32.0) / 32.0,
         *normalize_resources(features['Player Resources']),
         *normalize_resources(features['Opponent Resources']),
         *card_str_to_one_hot(features['Card Played']),
@@ -62,10 +60,9 @@ def extract_features_from_state(state: dict, move: Tuple) -> dict:
         opponent = state['player1']
     
     return {
-        'Turn': state['turn_count'],
         'Player Castle HP': current_player['castle_hp'],
         'Player Fence HP': current_player['fence_hp'],
-        'Player Hand': current_player['hand'],
+        'Player Hand': [card['id'] if isinstance(card, dict) else card for card in current_player['hand']],
         'Opponent Castle HP': opponent['castle_hp'],
         'Opponent Fence HP': opponent['fence_hp'],
         'Player Resources': [val for sublist in current_player['resources'] for val in sublist],

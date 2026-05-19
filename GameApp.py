@@ -69,7 +69,7 @@ class GameApp(QMainWindow):
     def start_mp_game(self) -> None:
         default_player_names = [self.config.default_player_name + '1', self.config.default_player_name + '2']
         preferred_player_deck = self.config.preferred_deck
-        self.game_instance.setup_singleplayer(default_player_names, player1_deck=preferred_player_deck)
+        self.game_instance.setup_multiplayer(default_player_names, player1_deck=preferred_player_deck)
         self.start_game()
 
     def start_cpu_game(self) -> None:
@@ -87,28 +87,31 @@ class GameApp(QMainWindow):
             self.game_instance.use_card_effect(self.game_instance.current_player, card)
             self.game_instance.current_player.spend_resources(card)
 
-        self.game_instance.current_player.discard_card(card)
-
-        # Updating resources
-        self.game_instance.update_resources(self.game_instance.get_other_player(self.game_instance.current_player))
-        self.current_view.update_resource_labels()
-        self.current_view.update_structure_levels()
-        self.current_view.update_last_played_card_label(card_label)
-
         self.game_instance.set_game_status()
 
         if self.game_logger is not None:
             self.game_logger.log_move(self.game_instance, card, discarded)
 
-        self.game_instance.current_player.draw_card()
+        # Updating resources
+        self.current_view.update_resource_labels()
+        self.current_view.update_structure_levels()
+        self.current_view.update_last_played_card_label(card_label)
 
         self.current_view.handle_game_status(self.game_instance.game_status)
 
         if self.game_instance.game_status == 0:
+            self.game_instance.current_player.discard_card(card)
+            self.game_instance.current_player.draw_card()
             self.game_instance.change_current_player()
+            self.game_instance.update_resources(self.game_instance.current_player)
+            self.current_view.update_resource_labels()
             self.current_view.update_current_turn_marker()
             self.current_view.clear_hand_display()
             self.current_view.start_turn()
+        else:
+            if self.game_logger is not None:
+                self.game_logger.close()
+                self.game_logger = None
 
     def back_to_main_menu(self) -> None:
         self.switch_view(MainMenuView, self.start_sp_game, self.start_mp_game, self.start_cpu_game, self.show_deck_manager)

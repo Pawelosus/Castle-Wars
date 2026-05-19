@@ -10,26 +10,24 @@ class MoveDataset(Dataset):
         self._preprocess_data()
 
     def _preprocess_data(self):
-        """Convert and normalize all data upfront."""
-        # Resources: String -> List[int]
         self.data['Player Resources'] = self.data['Player Resources'].apply(literal_eval)
         self.data['Opponent Resources'] = self.data['Opponent Resources'].apply(literal_eval)
         self.data['Player Hand'] = self.data['Player Hand'].apply(literal_eval)
 
-        # Precompute labels
         self.data['Label'] = self.data.apply(
             lambda row: 1.0 if row['Current Player'] == row['Game Result'] else -1.0,
             axis=1
         )
+
+        # Precompute all tensors upfront
+        self.tensors = torch.stack([
+            build_feature_tensor(row) for _, row in self.data.iterrows()
+        ])
+        self.labels = torch.tensor(self.data['Label'].values, dtype=torch.float32)
 
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        row = self.data.iloc[idx]
-
-        return (
-            build_feature_tensor(features=row),
-            torch.tensor(row['Label'], dtype=torch.float32)
-        )
+        return self.tensors[idx], self.labels[idx]
