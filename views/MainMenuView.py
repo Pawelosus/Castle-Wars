@@ -7,12 +7,13 @@ from views.components.MenuButton import MenuButton
 from utils.GameResourcesManager import GameResourcesManager
 
 class MainMenuView(QFrame):
-    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback, start_game_cpu_callback, display_deck_manager_callback) -> None:
+    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback, start_game_cpu_callback, display_deck_manager_callback, display_credits_callback=None) -> None:
         super().__init__(parent)
         self.start_game_sp_callback = start_game_sp_callback
         self.start_game_mp_callback = start_game_mp_callback
         self.start_game_cpu_callback = start_game_cpu_callback
         self.display_deck_manager_callback = display_deck_manager_callback
+        self.display_credits_callback = display_credits_callback
 
         uic.loadUi('views/mainmenu_view.ui', self)
 
@@ -67,7 +68,7 @@ class MainMenuView(QFrame):
             {"text": "AI vs AI", "callback": "start_game_cpu_callback"},
             {"text": "Deck Manager", "callback": "display_deck_manager_callback"},
             {"text": "Instructions", "callback": None},
-            {"text": "Credits", "callback": None},
+            {"text": "Credits", "callback": "display_credits_callback"},
         ]
         self.setup_buttons(config)
 

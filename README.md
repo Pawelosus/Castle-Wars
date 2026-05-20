@@ -44,8 +44,6 @@ Contributions are welcome! If you'd like to contribute to the project, please fo
 
 ## TODO List:
 
-- **Credits Screen:** Add credits screen to acknowledge contributions and give credit to the original game creator.
-
 ## Acknowledgements
 
 - Original game: [Castle Wars by m0rkeulv](https://cdn.m0rkeulv.net/games/html5/cwo/normal.html)
