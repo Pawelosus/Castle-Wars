@@ -810,6 +810,25 @@ font-size: 14px;</string>
     </widget>
    </widget>
   </widget>
+  <widget class="QPushButton" name="leave_game_button">
+   <property name="geometry">
+    <rect>
+     <x>748</x>
+     <y>4</y>
+     <width>27</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton { background-color: rgba(0,0,0,40); color: rgba(255,255,255,70); border: 1px solid rgba(255,255,255,25); border-radius: 13px; font-size: 13px; font-weight: bold; } QPushButton:hover { background-color: rgba(200,40,40,210); color: white; border: 1px solid rgba(255,255,255,90); }</string>
+   </property>
+   <property name="text">
+    <string>✕</string>
+   </property>
+   <property name="toolTip">
+    <string>Leave Game</string>
+   </property>
+  </widget>
   <zorder>sky_texture</zorder>
   <zorder>grass_texture</zorder>
   <zorder>verticalLayoutWidget</zorder>
@@ -817,6 +836,7 @@ font-size: 14px;</string>
   <zorder>verticalLayoutWidget_2</zorder>
   <zorder>p1_name</zorder>
   <zorder>p2_name</zorder>
+  <zorder>leave_game_button</zorder>
  </widget>
  <resources>
   <include location="../resources/resources.qrc"/>

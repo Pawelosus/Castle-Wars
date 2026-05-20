@@ -97,6 +97,10 @@ class GameView(QFrame):
         game_result_exit_button = self.findChild(QPushButton, 'game_result_exit_button')
         if game_result_exit_button:
             game_result_exit_button.clicked.connect(self.back_to_main_menu_callback)
+
+        leave_game_button = self.findChild(QPushButton, 'leave_game_button')
+        if leave_game_button:
+            leave_game_button.clicked.connect(self.back_to_main_menu_callback)
     
     def color_player_structures(self) -> None:
         players = [self.game_instance.player1, self.game_instance.player2]

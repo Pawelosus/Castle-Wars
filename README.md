@@ -44,8 +44,6 @@ Contributions are welcome! If you'd like to contribute to the project, please fo
 
 ## TODO List:
 
-- **Custom AI opponents** Adding custom AI opponents.
-- **GUI Tweaks:** Adding a navigation bar for exiting games and other small stuff.
 - **Credits Screen:** Add credits screen to acknowledge contributions and give credit to the original game creator.
 
 ## Acknowledgements
