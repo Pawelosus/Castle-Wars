@@ -114,4 +114,9 @@ class GameApp(QMainWindow):
                 self.game_logger = None
 
     def back_to_main_menu(self) -> None:
+        if self.game_logger is not None:
+            log_path = self.game_logger.log_base_dir / self.game_logger.log_file_name
+            self.game_logger.close()
+            log_path.unlink(missing_ok=True)
+            self.game_logger = None
         self.switch_view(MainMenuView, self.start_sp_game, self.start_mp_game, self.start_cpu_game, self.show_deck_manager)
