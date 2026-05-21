@@ -1,21 +1,27 @@
 # Castle Wars (fan project)
 
-This project is a fan-made adaptation of the original game Castle Wars, created by m0rkeulv.
+This project is a fan-made adaptation of the original game Castle Wars, created by m0rkeulv. It's main use is for testing different AI agents.
 It has been rewritten from scratch in Python, using PyQt6 for GUI.
 
 ## Overview
 
-Castle Wars is a strategy game where players build castles and compete against each other. This fan project aims to recreate the core gameplay mechanics of the original game and add extra functionalities on top of it, featuring AI that learns over time. **This fan project is still under development**.
+Castle Wars is a strategy game where players build castles and compete against each other. This fan project aims to recreate the core gameplay mechanics of the original game and add extra functionalities on top of it, featuring AI that learns over time. **This project is still under development**.
+
+
+<p align="center">
+  <img width="600" alt="Castle Wars gameplay preview" src="https://github.com/user-attachments/assets/773fd8e8-8ea5-4551-a1c9-ad5b182869dd" />
+</p>
 
 ## Features
 
 - **Gameplay Mechanics** Core gameplay mechanics of the game have been recreated.
 - **Custom Card Decks** Players can customize their card decks and store them in files for later use.
-- **AI Opponents** Multiple AI opponents available, including rule-based and MCTS/neural-network agents.
+- **AI Opponents** Multiple AI opponents are available, including rule-based, MCTS, and neural network agents.
+- **Game Logging** Every game is automatically logged to the `logs/` directory for review and AI training purposes
+
 
 ## Usage
-
-To run the game, follow these steps:
+> Requires Python 3.9 or above
 
 1. Clone the repository:
 
@@ -42,8 +48,6 @@ Contributions are welcome! If you'd like to contribute to the project, please fo
 3. Make your changes and commit them: `git commit -am 'Add new feature'`
 4. Push to the branch: `git push origin feature-name`
 5. Submit a pull request
-
-## TODO List:
 
 ## Acknowledgements
 
