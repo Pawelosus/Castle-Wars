@@ -5,6 +5,7 @@ from views.MainMenuView import MainMenuView
 from views.GameView import GameView
 from views.DeckManagerView import DeckManagerView
 from views.CreditsView import CreditsView
+from views.SplashScreenView import SplashScreenView
 from utils.GameLogger import GameLogger
 from utils.GameResourcesManager import GameResourcesManager
 from Game import Game
@@ -16,6 +17,7 @@ class GameApp(QMainWindow):
         self.game_instance = Game()
         self.config = Config()
         self.game_logger = None
+        self.ai_models: list[str] = []
 
         self.setWindowTitle('Castle Wars')
         self.setFixedSize(int(self.config.window_width), int(self.config.window_height))
@@ -24,7 +26,7 @@ class GameApp(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
 
-        self.current_view = MainMenuView(self, self.start_sp_game, self.start_mp_game, self.start_cpu_game, self.show_deck_manager, self.show_credits)
+        self.current_view = SplashScreenView(self, self._on_splash_done)
         self.layout.addWidget(self.current_view)
         
     def switch_view(self, new_view, *args, **kwargs) -> None:
@@ -78,6 +80,13 @@ class GameApp(QMainWindow):
         self.game_instance.setup_cpu_only(default_player_names, player2_type=RuleBasedAIPlayer)
         self.start_game()
 
+    def _on_splash_done(self, ai_models: list) -> None:
+        self.ai_models = ai_models
+        self.show_main_menu()
+
+    def show_main_menu(self) -> None:
+        self.switch_view(MainMenuView, self.start_sp_game, self.start_mp_game, self.start_cpu_game, self.show_deck_manager, self.show_credits, self.ai_models)
+
     def show_deck_manager(self) -> None:
         self.switch_view(DeckManagerView, self.config, self.back_to_main_menu)
 
@@ -123,4 +132,4 @@ class GameApp(QMainWindow):
             self.game_logger.close()
             log_path.unlink(missing_ok=True)
             self.game_logger = None
-        self.switch_view(MainMenuView, self.start_sp_game, self.start_mp_game, self.start_cpu_game, self.show_deck_manager, self.show_credits)
+        self.show_main_menu()
