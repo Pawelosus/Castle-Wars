@@ -11,6 +11,7 @@ Castle Wars is a strategy game where players build castles and compete against e
 
 - **Gameplay Mechanics** Core gameplay mechanics of the game have been recreated.
 - **Custom Card Decks** Players can customize their card decks and store them in files for later use.
+- **AI Opponents** Multiple AI opponents available, including rule-based and MCTS/neural-network agents.
 
 ## Usage
 
