@@ -7,13 +7,14 @@ from views.components.MenuButton import MenuButton
 from utils.GameResourcesManager import GameResourcesManager
 
 class MainMenuView(QFrame):
-    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback, start_game_cpu_callback, display_deck_manager_callback, display_credits_callback=None) -> None:
+    def __init__(self, parent, start_game_sp_callback, start_game_mp_callback, start_game_cpu_callback, display_deck_manager_callback, display_credits_callback=None, ai_models=None) -> None:
         super().__init__(parent)
         self.start_game_sp_callback = start_game_sp_callback
         self.start_game_mp_callback = start_game_mp_callback
         self.start_game_cpu_callback = start_game_cpu_callback
         self.display_deck_manager_callback = display_deck_manager_callback
         self.display_credits_callback = display_credits_callback
+        self._ai_models = ai_models or []
 
         uic.loadUi('views/mainmenu_view.ui', self)
 
@@ -82,7 +83,7 @@ class MainMenuView(QFrame):
         self.menu_button_vbox.addWidget(ai_label)
 
         self.ai_model_combo = QComboBox()
-        ai_models = GameResourcesManager.load_ai_models()
+        ai_models = self._ai_models if self._ai_models else GameResourcesManager.load_ai_models()
         self.ai_model_combo.addItems(ai_models)
         self.menu_button_vbox.addWidget(self.ai_model_combo)
 
